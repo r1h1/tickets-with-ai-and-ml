@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Usuarios</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.bootstrap5.min.css">
+    <style>
+        body {
+            background-color: #f7fafd;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            background-color: #F5F5F5;
+            min-height: 100vh;
+            color: #fff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            padding-top: 1rem;
+        }
+
+        .sidebar a {
+            color: #546e7a;
+            text-decoration: none;
+            display: block;
+            padding: 14px 24px;
+            border-radius: 12px;
+            margin: 6px 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar a:hover, .sidebar .active {
+            background-color: #cfd8dc;
+            color: #263238;
+        }
+
+        .navbar {
+            background-color: #F5F5F5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary {
+            background-color: #546e7a;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #455a64;
+        }
+
+        .table-thead-color {
+            background-color: #eceff1 !important;
+            color: #000;
+        }
+
+        table.dataTable tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        table.dataTable tbody tr:hover {
+            background-color: #f0f0f0;
+        }
+
+        table th, table td {
+            vertical-align: middle !important;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                z-index: 1000;
+                width: 250px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar px-3 d-flex justify-content-between">
+    <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a href="../../../index.html" class="btn btn-secondary">Cerrar Sesión</a>
+</nav>
+<div class="d-flex">
+    <div class="sidebar" id="sidebar">
+        <div class="px-3 mt-5">
+            <a href="start.html">Dashboard</a>
+            <a href="bot.html">Base de Conocimiento (Bot)</a>
+            <a href="tickets.html">Tickets</a>
+            <a href="categorias.html">Categorias</a>
+            <a href="usuarios.html" class="active">Usuarios</a>
+            <a href="roles.html">Roles</a>
+        </div>
+    </div>
+    <div class="container-fluid p-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">Usuarios del Sistema</h5>
+            <button class="btn btn-secondary" onclick="agregarUsuario()">Agregar Usuario</button>
+        </div>
+
+        <div class="table-responsive">
+            <table id="usuariosTable" class="table table-hover table-bordered align-middle text-center">
+                <thead class="table-thead-color">
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="usuariosBody">
+                <tr>
+                    <td>1</td>
+                    <td>Ana López</td>
+                    <td>ana@example.com</td>
+                    <td>Administrador</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary">Editar</button>
+                        <button class="btn btn-sm btn-secondary">Eliminar</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>Juan Pérez</td>
+                    <td>juan@example.com</td>
+                    <td>Soporte</td>
+                    <td>
+                        <button class="btn btn-sm btn-secondary">Editar</button>
+                        <button class="btn btn-sm btn-secondary">Eliminar</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+    }
+
+    function agregarUsuario() {
+        const id = document.querySelectorAll('#usuariosBody tr').length + 1;
+        const nombre = prompt("Nombre del usuario:");
+        const correo = prompt("Correo electrónico:");
+        const rol = prompt("Rol del usuario:");
+        if (nombre && correo && rol) {
+            const row = `<tr>
+                <td>${id}</td>
+                <td>${nombre}</td>
+                <td>${correo}</td>
+                <td>${rol}</td>
+                <td>
+                    <button class='btn btn-sm btn-secondary'>Editar</button>
+                    <button class='btn btn-sm btn-secondary'>Eliminar</button>
+                </td>
+            </tr>`;
+            document.getElementById('usuariosBody').insertAdjacentHTML('beforeend', row);
+        }
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js"
+        integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+"
+        crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#usuariosTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel', 'pdf', 'print'
+            ],
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            }
+        });
+    });
+</script>
+</body>
+</html>

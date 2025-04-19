@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Ticket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+    <style>
+        body {
+            background-color: #f7fafd;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            background-color: #F5F5F5;
+            min-height: 100vh;
+            color: #fff;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+            padding-top: 1rem;
+        }
+
+        .sidebar a {
+            color: #546e7a;
+            text-decoration: none;
+            display: block;
+            padding: 14px 24px;
+            border-radius: 12px;
+            margin: 6px 0;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar a:hover, .sidebar .active {
+            background-color: #cfd8dc;
+            color: #263238;
+        }
+
+        .navbar {
+            background-color: #F5F5F5;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary {
+            background-color: #546e7a;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 20px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background-color: #455a64;
+        }
+
+        .message-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            color: #37474F;
+        }
+
+        .input-box {
+            background-color: #ffffff;
+            border-radius: 12px;
+            padding: 1.25rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        textarea {
+            resize: none;
+            border-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: absolute;
+                z-index: 1000;
+                width: 250px;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+
+            .sidebar.show {
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar px-3 d-flex justify-content-between">
+    <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a href="../../../index.html" class="btn btn-secondary">Cerrar Sesión</a>
+</nav>
+<div class="d-flex">
+    <div class="sidebar" id="sidebar">
+        <div class="px-3 mt-5">
+            <a href="start.html">Dashboard</a>
+            <a href="bot.html" class="active">Base de Conocimiento (Bot)</a>
+            <a href="tickets.html">Tickets</a>
+            <a href="categorias.html">Categorias</a>
+            <a href="usuarios.html">Usuarios</a>
+            <a href="roles.html">Roles</a>
+        </div>
+    </div>
+    <div class="container-fluid p-5">
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Base de Conocimiento (Bot)</h5>
+            <button class="btn btn-secondary" onclick="resetTicket()">Nuevo Ticket</button>
+        </div>
+        <p class="text-secondary mt-5 mb-5">En este apartado puedes hacer tus consultas referente a alguna inquietud de soporte a nuestro
+            bot de inteligencia artificial. Si no estás satisfecho o pudiste resolver el inconveniente, crea un
+            ticket en "Nuevo Ticket" para que un agente de soporte humano pueda atenderte.</p>
+
+        <div id="responseArea"></div>
+
+        <div class="input-box">
+            <form onsubmit="return enviarTicket()">
+                <div class="mb-3">
+                    <textarea class="form-control" id="mensaje" rows="5"
+                              placeholder="Describe tu solicitud y presiona enviar..." required></textarea>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-secondary">Enviar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+    }
+
+    function enviarTicket() {
+        const mensaje = document.getElementById('mensaje').value.trim();
+        if (!mensaje) return false;
+
+        const card = document.createElement('div');
+        card.className = 'message-card';
+        card.textContent = mensaje;
+
+        document.getElementById('responseArea').prepend(card);
+        document.getElementById('mensaje').value = '';
+        return false;
+    }
+
+    function resetTicket() {
+        document.getElementById('mensaje').value = '';
+        document.getElementById('responseArea').innerHTML = '';
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js"
+        integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+"
+        crossorigin="anonymous"></script>
+</body>
+</html>
