@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Bot</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+          crossorigin="anonymous">
     <link rel="stylesheet" href="../../assets/css/common.css">
+    <style>
+        .message-card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            padding: 1rem 1.25rem;
+            margin-bottom: 1rem;
+            color: #37474F;
+        }
+    </style>
 </head>
 <body>
 <nav class="navbar px-3 d-flex justify-content-between">
@@ -28,17 +38,21 @@
     </div>
     <div class="container-fluid p-5">
         <div class="mb-4 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Base de Conocimiento (Bot)</h5>
+            <h5 class="mb-0">Base de Conocimiento (Bot con Inteligencia Artificial)</h5>
             <button class="btn btn-secondary" onclick="resetTicket()">Nuevo Ticket</button>
         </div>
-        <p class="text-secondary mt-5 mb-5">En este apartado puedes hacer tus consultas referente a alguna inquietud de soporte a nuestro
-            bot de inteligencia artificial. Si no estás satisfecho o pudiste resolver el inconveniente, crea un
-            ticket en "Nuevo Ticket" para que un agente de soporte humano pueda atenderte.</p>
+        <p class="text-secondary mt-5 mb-5">
+            En este apartado puedes hacer tus consultas referente a alguna inquietud de soporte a nuestro bot de
+            inteligencia artificial (tienes solamente
+            3 consultas para realizar, luego deberás abrir un nuevo ticket para que te atienda un agente humano).
+            Si no estás satisfecho o pudiste resolver el inconveniente, crea un ticket en "Nuevo Ticket" para que un
+            agente de soporte humano pueda atenderte.
+        </p>
 
         <div id="responseArea"></div>
 
         <div class="input-box">
-            <form onsubmit="return enviarTicket()">
+            <form id="formBot">
                 <div class="mb-3">
                     <textarea class="form-control" id="mensaje" rows="5"
                               placeholder="Describe tu solicitud y presiona enviar..." required></textarea>
@@ -50,34 +64,104 @@
         </div>
     </div>
 </div>
+
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
     }
 
-    function enviarTicket() {
-        const mensaje = document.getElementById('mensaje').value.trim();
-        if (!mensaje) return false;
-
-        const card = document.createElement('div');
-        card.className = 'message-card';
-        card.textContent = mensaje;
-
-        document.getElementById('responseArea').prepend(card);
-        document.getElementById('mensaje').value = '';
-        return false;
-    }
-
     function resetTicket() {
         document.getElementById('mensaje').value = '';
         document.getElementById('responseArea').innerHTML = '';
+        sessionStorage.setItem('contadorMensajes', '0');
     }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        sessionStorage.setItem('contadorMensajes', sessionStorage.getItem('contadorMensajes') || '0');
+
+        document.getElementById('formBot').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const contador = parseInt(sessionStorage.getItem('contadorMensajes'));
+            if (contador >= 3) {
+                const aviso = document.createElement('div');
+                aviso.className = 'message-card bg-warning text-dark';
+                aviso.innerHTML = '<strong>Bot:</strong><br>Por favor crea un nuevo ticket para un humano, tus consultas por sesión fueron agotadas, intenta nuevamente más tarde.';
+                document.getElementById('responseArea').prepend(aviso);
+                return;
+            }
+
+            const mensaje = document.getElementById('mensaje').value.trim();
+            if (!mensaje) return;
+
+            const userCard = document.createElement('div');
+            userCard.className = 'message-card';
+            userCard.innerHTML = `<strong>Tú:</strong><br>${mensaje}`;
+            document.getElementById('responseArea').prepend(userCard);
+
+            document.getElementById('mensaje').value = '';
+
+            const headers = {
+                "Authorization": "Bearer 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",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost"
+            };
+
+            const body = {
+                model: "openai/gpt-3.5-turbo",
+                messages: [
+                    {
+                        role: "system",
+                        content: "Eres un asistente senior de soporte técnico para una plataforma Help Desk especializado en " +
+                            "consultas tecnológicas de todo tipo relacionado con windows, linux y macos además de tecnologías " +
+                            "móviles, eres de igual manera un experto en todo el conomiento de un agente senior de soporte técnico " +
+                            "para resolverle dudas a las personas explicándoles a un nivel muy comprensible o for dummies para que " +
+                            "no se les complique resolver a ellos mismos los problemas que surgen. La estructura de tu mensaje " +
+                            "debe de ser primero una linea de explicación de qué es lo que hará, luego una serie de pasos y por último " +
+                            "indicarle al usuario que puede presionar el botón de nuevo ticket para ser atendido por un humanño si no " +
+                            "puede resolver por si solo el problema. Responde de forma clara, breve y profesional."
+                    },
+                    {
+                        role: "user",
+                        content: mensaje
+                    }
+                ]
+            };
+
+            try {
+                const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+                    method: "POST",
+                    headers: headers,
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                if (data.choices && data.choices.length > 0) {
+                    const respuesta = data.choices[0].message.content;
+                    const botCard = document.createElement('div');
+                    botCard.className = 'message-card bg-light border';
+                    botCard.innerHTML = `<strong>Bot:</strong><br>${respuesta}`;
+                    document.getElementById('responseArea').prepend(botCard);
+                    sessionStorage.setItem('contadorMensajes', (contador + 1).toString());
+                } else {
+                    throw new Error("Respuesta vacía");
+                }
+
+            } catch (error) {
+                const errorCard = document.createElement('div');
+                errorCard.className = 'message-card bg-danger text-white';
+                errorCard.textContent = "Error al contactar al bot. Intenta de nuevo.";
+                document.getElementById('responseArea').prepend(errorCard);
+                console.error("Error:", error);
+            }
+        });
+    });
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js"
-        integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+"
         crossorigin="anonymous"></script>
 </body>
 </html>

@@ -31,8 +31,45 @@
     <div class="container-fluid p-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="mb-0">Gestión de Roles</h5>
-            <button class="btn btn-secondary" onclick="agregarRol()">Crear Rol</button>
+            <button class="btn btn-secondary" onclick="mostrarModalRol()">Crear Rol</button>
         </div>
+
+        <!-- Modal Crear Rol -->
+        <div class="modal fade" id="modalAgregarRol" tabindex="-1" aria-labelledby="agregarRolLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow-sm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="agregarRolLabel">Nuevo Rol</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formNuevoRol">
+                            <div class="mb-3">
+                                <label for="nombreRol" class="form-label">Nombre del Rol</label>
+                                <input type="text" class="form-control rounded-3" id="nombreRol" placeholder="Ej. Admin">
+                            </div>
+                            <div class="mb-3">
+                                <label for="menusRol" class="form-label">Menús Asignados</label>
+                                <select multiple class="form-select rounded-3" id="menusRol">
+                                    <option value="start.html">Dashboard</option>
+                                    <option value="bot.html">Base de Conocimiento (Bot)</option>
+                                    <option value="tickets.html">Tickets</option>
+                                    <option value="categorias.html">Categorías</option>
+                                    <option value="usuarios.html">Usuarios</option>
+                                    <option value="roles.html">Roles</option>
+                                </select>
+                                <small class="text-muted">Usa Ctrl (Windows) o Cmd (Mac) para seleccionar varios.</small>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary">Guardar Rol</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Modal -->
 
         <div class="table-responsive">
             <table id="rolesTable" class="table table-hover table-bordered align-middle text-center">
@@ -59,36 +96,18 @@
         </div>
     </div>
 </div>
+
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
     }
 
-    function agregarRol() {
-        const id = document.querySelectorAll('#rolesBody tr').length + 1;
-        const nombre = prompt("Nombre del rol:");
-        if (!nombre) return;
-
-        const opciones = [
-            "start.html", "bot.html", "tickets.html", "categorias.html", "usuarios.html", "roles.html"
-        ];
-        let seleccionados = prompt(`URLs disponibles: \n\n${opciones.join("\n")}\n\nSeleccioná separados por coma:`);
-        if (!seleccionados) return;
-
-        const urls = seleccionados.split(',').map(u => u.trim()).filter(u => u !== '');
-
-        const row = `<tr>
-      <td>${id}</td>
-      <td>${nombre}</td>
-      <td>${urls.join(', ')}</td>
-      <td>
-        <button class='btn btn-sm btn-secondary'>Editar</button>
-        <button class='btn btn-sm btn-secondary'>Eliminar</button>
-      </td>
-    </tr>`;
-        document.getElementById('rolesBody').insertAdjacentHTML('beforeend', row);
+    function mostrarModalRol() {
+        const modal = new bootstrap.Modal(document.getElementById('modalAgregarRol'));
+        modal.show();
     }
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>

@@ -33,6 +33,60 @@
             <h5 class="mb-0">Tickets Abiertos</h5>
             <button class="btn btn-secondary">Nuevo Ticket</button>
         </div>
+
+        <!-- NUEVO TICKET MODAL -->
+        <!-- Modal Nuevo Ticket -->
+        <div class="modal fade" id="modalNuevoTicket" tabindex="-1" aria-labelledby="nuevoTicketLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow-sm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="nuevoTicketLabel">Nuevo Ticket</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formNuevoTicket">
+                            <div class="mb-3">
+                                <label for="fecha" class="form-label">Fecha</label>
+                                <input type="date" class="form-control rounded-3" id="fecha">
+                            </div>
+                            <div class="mb-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <select class="form-select rounded-3" id="nombre">
+                                    <option selected>Seleccionar usuario</option>
+                                    <option value="Klemen">Klemen</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="asunto" class="form-label">Asunto</label>
+                                <input type="text" class="form-control rounded-3" id="asunto"
+                                       placeholder="Describe el asunto">
+                            </div>
+                            <div class="mb-3">
+                                <label for="estado" class="form-label">Estado</label>
+                                <input type="text" class="form-control rounded-3" id="estado" value="Nuevo" readonly>
+                            </div>
+                            <div class="mb-3">
+                                <label for="categoria" class="form-label">Categoría</label>
+                                <select class="form-select rounded-3" id="categoria">
+                                    <option selected>Seleccionar categoría</option>
+                                    <option value="Soporte">Soporte</option>
+                                    <option value="Acceso">Acceso</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary">Guardar Ticket</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- FIN NUEVO TICKET MODAL -->
+
         <div class="table-responsive">
             <table id="ticketTable" class="table table-hover table-bordered align-middle text-center">
                 <thead class="table-thead-color">
@@ -89,9 +143,24 @@
     </div>
 </div>
 <script>
-    function toggleSidebar() {
-        document.getElementById('sidebar').classList.toggle('show');
-    }
+    document.addEventListener('DOMContentLoaded', () => {
+        const fechaInput = document.getElementById('fecha');
+
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0'); // enero = 0
+        const day = String(today.getDate()).padStart(2, '0');
+
+        // Formato correcto para <input type="date">: YYYY-MM-DD
+        const fechaFormateada = `${year}-${month}-${day}`;
+        fechaInput.value = fechaFormateada;
+
+        // Mostrar el modal
+        document.querySelector('button.btn.btn-secondary').addEventListener('click', () => {
+            const modal = new bootstrap.Modal(document.getElementById('modalNuevoTicket'));
+            modal.show();
+        });
+    });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"

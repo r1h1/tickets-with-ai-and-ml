@@ -31,8 +31,37 @@
     <div class="container-fluid p-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="mb-0">Categorías de Tickets</h5>
-            <button class="btn btn-secondary" onclick="agregarCategoria()">Agregar Categoría</button>
+            <button class="btn btn-secondary" onclick="mostrarModalCategoria()">Agregar Categoría</button>
         </div>
+
+        <!-- Modal Agregar Categoría -->
+        <div class="modal fade" id="modalAgregarCategoria" tabindex="-1" aria-labelledby="agregarCategoriaLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow-sm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="agregarCategoriaLabel">Nueva Categoría</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formNuevaCategoria">
+                            <div class="mb-3">
+                                <label for="nombreCategoria" class="form-label">Nombre de la Categoría</label>
+                                <input type="text" class="form-control rounded-3" id="nombreCategoria" placeholder="Ej. Soporte Técnico">
+                            </div>
+                            <div class="mb-3">
+                                <label for="descripcionCategoria" class="form-label">Descripción</label>
+                                <textarea class="form-control rounded-3" id="descripcionCategoria" rows="3" placeholder="Describe el tipo de tickets que incluirá esta categoría"></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary">Guardar Categoría</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Modal -->
 
         <div class="table-responsive">
             <table id="categoriasTable" class="table table-hover table-bordered align-middle text-center">
@@ -68,29 +97,18 @@
         </div>
     </div>
 </div>
+
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
     }
 
-    function agregarCategoria() {
-        const id = document.querySelectorAll('#categoriasBody tr').length + 1;
-        const nombre = prompt("Nombre de la nueva categoría:");
-        const descripcion = prompt("Descripción de la categoría:");
-        if (nombre && descripcion) {
-            const row = `<tr>
-                <td>${id}</td>
-                <td>${nombre}</td>
-                <td>${descripcion}</td>
-                <td>
-                        <button class="btn btn-sm btn-secondary">Editar</button>
-                        <button class="btn btn-sm btn-secondary">Eliminar</button>
-                    </td>
-            </tr>`;
-            document.getElementById('categoriasBody').insertAdjacentHTML('beforeend', row);
-        }
+    function mostrarModalCategoria() {
+        const modal = new bootstrap.Modal(document.getElementById('modalAgregarCategoria'));
+        modal.show();
     }
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>

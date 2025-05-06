@@ -31,8 +31,46 @@
     <div class="container-fluid p-5">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h5 class="mb-0">Usuarios del Sistema</h5>
-            <button class="btn btn-secondary" onclick="agregarUsuario()">Agregar Usuario</button>
+            <button class="btn btn-secondary" onclick="mostrarModalUsuario()">Agregar Usuario</button>
         </div>
+
+        <!-- Modal Agregar Usuario -->
+        <div class="modal fade" id="modalAgregarUsuario" tabindex="-1" aria-labelledby="agregarUsuarioLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 border-0 shadow-sm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="agregarUsuarioLabel">Nuevo Usuario</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="formNuevoUsuario">
+                            <div class="mb-3">
+                                <label for="nombreUsuario" class="form-label">Nombre completo</label>
+                                <input type="text" class="form-control rounded-3" id="nombreUsuario" placeholder="Ej. Ana López">
+                            </div>
+                            <div class="mb-3">
+                                <label for="correoUsuario" class="form-label">Correo electrónico</label>
+                                <input type="email" class="form-control rounded-3" id="correoUsuario" placeholder="Ej. ana@example.com">
+                            </div>
+                            <div class="mb-3">
+                                <label for="rolUsuario" class="form-label">Rol</label>
+                                <select class="form-select rounded-3" id="rolUsuario">
+                                    <option selected>Seleccionar rol</option>
+                                    <option value="Administrador">Administrador</option>
+                                    <option value="Soporte">Soporte</option>
+                                    <option value="Usuario">Usuario</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-secondary">Guardar Usuario</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Fin Modal -->
 
         <div class="table-responsive">
             <table id="usuariosTable" class="table table-hover table-bordered align-middle text-center">
@@ -71,31 +109,18 @@
         </div>
     </div>
 </div>
+
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
     }
 
-    function agregarUsuario() {
-        const id = document.querySelectorAll('#usuariosBody tr').length + 1;
-        const nombre = prompt("Nombre del usuario:");
-        const correo = prompt("Correo electrónico:");
-        const rol = prompt("Rol del usuario:");
-        if (nombre && correo && rol) {
-            const row = `<tr>
-                <td>${id}</td>
-                <td>${nombre}</td>
-                <td>${correo}</td>
-                <td>${rol}</td>
-                <td>
-                    <button class='btn btn-sm btn-secondary'>Editar</button>
-                    <button class='btn btn-sm btn-secondary'>Eliminar</button>
-                </td>
-            </tr>`;
-            document.getElementById('usuariosBody').insertAdjacentHTML('beforeend', row);
-        }
+    function mostrarModalUsuario() {
+        const modal = new bootstrap.Modal(document.getElementById('modalAgregarUsuario'));
+        modal.show();
     }
 </script>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
