@@ -38,7 +38,7 @@
     </div>
     <div class="container-fluid p-5">
         <div class="mb-4 d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">Base de Conocimiento (Bot con Inteligencia Artificial)</h5>
+            <h5 class="mb-0">Base de Conocimiento (Bot Autónomo de IA)</h5>
             <button class="btn btn-secondary" onclick="resetTicket()">Nuevo Ticket</button>
         </div>
         <p class="text-secondary mt-5 mb-5">
@@ -49,12 +49,10 @@
             agente de soporte humano pueda atenderte.
         </p>
 
-        <div id="responseArea"></div>
-
         <div class="input-box">
             <form id="formBot">
                 <div class="mb-3">
-                    <textarea class="form-control" id="mensaje" rows="5"
+                    <textarea class="form-control" id="mensaje" rows="3"
                               placeholder="Describe tu solicitud y presiona enviar..." required></textarea>
                 </div>
                 <div class="d-flex justify-content-end">
@@ -62,6 +60,8 @@
                 </div>
             </form>
         </div>
+
+        <div id="responseArea" class="mt-3"></div>
     </div>
 </div>
 
@@ -86,20 +86,35 @@
             if (contador >= 3) {
                 const aviso = document.createElement('div');
                 aviso.className = 'message-card bg-warning text-dark';
-                aviso.innerHTML = '<strong>Bot:</strong><br>Por favor crea un nuevo ticket para un humano, tus consultas por sesión fueron agotadas, intenta nuevamente más tarde.';
+                aviso.innerHTML = '<strong>Bot:</strong><br>Por favor crea un nuevo ticket para un agente humano.';
                 document.getElementById('responseArea').prepend(aviso);
                 return;
             }
 
             const mensaje = document.getElementById('mensaje').value.trim();
-            if (!mensaje) return;
+            const cantidadPalabras = mensaje.split(/\s+/).filter(Boolean).length;
 
+            if (!mensaje || cantidadPalabras < 15) {
+                const aviso = document.createElement('div');
+                aviso.className = 'message-card bg-warning text-dark';
+                aviso.innerHTML = '<strong>Bot:</strong><br>Por favor describe mejor tu solicitud con al menos 15 palabras, intenta de nuevo.';
+                document.getElementById('responseArea').prepend(aviso);
+                return;
+            }
+
+            // Mostrar mensaje del usuario
             const userCard = document.createElement('div');
             userCard.className = 'message-card';
-            userCard.innerHTML = `<strong>Tú:</strong><br>${mensaje}`;
+            userCard.innerHTML = `<strong>Tu consulta:</strong><br>${mensaje}`;
             document.getElementById('responseArea').prepend(userCard);
-
             document.getElementById('mensaje').value = '';
+
+            // Crear card de carga
+            const loadingCard = document.createElement('div');
+            loadingCard.className = 'message-card bg-light border';
+            loadingCard.id = 'loadingCard';
+            loadingCard.innerHTML = `<strong>Bot:</strong><br>Espera un momento, el bot está trabajando en una respuesta adecuada...`;
+            document.getElementById('responseArea').prepend(loadingCard);
 
             const headers = {
                 "Authorization": "Bearer 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",
@@ -108,18 +123,12 @@
             };
 
             const body = {
-                model: "openai/gpt-3.5-turbo",
+                model: "deepseek/deepseek-r1:free",
+                max_tokens: 500,
                 messages: [
                     {
                         role: "system",
-                        content: "Eres un asistente senior de soporte técnico para una plataforma Help Desk especializado en " +
-                            "consultas tecnológicas de todo tipo relacionado con windows, linux y macos además de tecnologías " +
-                            "móviles, eres de igual manera un experto en todo el conomiento de un agente senior de soporte técnico " +
-                            "para resolverle dudas a las personas explicándoles a un nivel muy comprensible o for dummies para que " +
-                            "no se les complique resolver a ellos mismos los problemas que surgen. La estructura de tu mensaje " +
-                            "debe de ser primero una linea de explicación de qué es lo que hará, luego una serie de pasos y por último " +
-                            "indicarle al usuario que puede presionar el botón de nuevo ticket para ser atendido por un humanño si no " +
-                            "puede resolver por si solo el problema. Responde de forma clara, breve y profesional."
+                        content: "Eres un agente de soporte técnico especializado en sistemas operativos (Windows, Linux, macOS), redes y dispositivos móviles. Responde únicamente consultas técnicas, en español neutro, de manera clara, sin formato especial ni modismos. Si el problema persiste, indica al usuario que presione el botón 'Nuevo Ticket' para ser atendido por un agente humano."
                     },
                     {
                         role: "user",
@@ -137,6 +146,9 @@
 
                 const data = await response.json();
 
+                const loading = document.getElementById('loadingCard');
+                if (loading) loading.remove();
+
                 if (data.choices && data.choices.length > 0) {
                     const respuesta = data.choices[0].message.content;
                     const botCard = document.createElement('div');
@@ -149,6 +161,9 @@
                 }
 
             } catch (error) {
+                const loading = document.getElementById('loadingCard');
+                if (loading) loading.remove();
+
                 const errorCard = document.createElement('div');
                 errorCard.className = 'message-card bg-danger text-white';
                 errorCard.textContent = "Error al contactar al bot. Intenta de nuevo.";
