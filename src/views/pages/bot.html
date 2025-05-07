@@ -96,16 +96,38 @@
             const mensaje = document.getElementById('mensaje').value.trim();
             const cantidadPalabras = mensaje.split(/\s+/).filter(Boolean).length;
 
-            const palabrasClaveTecnicas = ['windows', 'linux', 'mac', 'pantalla', 'ip', 'red', 'conexión', 'driver', 'actualización', 'formateo', 'wifi', 'error', 'teclado', 'monitor', 'impresora', 'puerto', 'router'];
+            const palabrasClaveTecnicas = [
+                'windows', 'linux', 'mac', 'pantalla', 'ip', 'red', 'conexión', 'driver', 'actualización',
+                'formateo', 'wifi', 'error', 'teclado', 'monitor', 'impresora', 'puerto', 'router',
+                'audio', 'sonido', 'altavoz', 'parlante', 'controlador', 'música', 'reproducción',
+                'compu', 'computadora', 'teléfono', 'android', 'ios', 'iphone', 'soporte', 'técnico'
+            ];
 
-            const esTecnico = palabrasClaveTecnicas.some(palabra => mensaje.toLowerCase().includes(palabra));
+            const palabrasDetectadas = palabrasClaveTecnicas.filter(palabra => mensaje.toLowerCase().includes(palabra));
+            const esTecnico = palabrasDetectadas.length > 0;
 
             if (!mensaje || cantidadPalabras < 15 || !esTecnico) {
-                mostrarAviso('warning', 'Por favor describe tu problema técnico con al menos 15 palabras y asegúrate de que sea un tema relacionado con soporte técnico.');
+                let advertencia = 'Por favor describe tu problema técnico con al menos 15 palabras. ';
+                advertencia += 'Además, incluye al menos una palabra relacionada con soporte técnico como ';
+                advertencia += palabrasClaveTecnicas.slice(0, 5).join(', ') + '...';
+
+                if (!esTecnico) {
+                    advertencia += '<br><br>No se detectó ninguna palabra técnica clave en tu mensaje.';
+                }
+
+                mostrarAviso('warning', advertencia);
                 return;
             }
 
             mostrarMensajeUsuario(mensaje);
+
+            if (palabrasDetectadas.length > 0) {
+                const palabraCard = document.createElement('div');
+                palabraCard.className = 'message-card bg-info text-white';
+                palabraCard.innerHTML = `<strong>Palabras técnicas detectadas:</strong> ${palabrasDetectadas.join(', ')}`;
+                document.getElementById('responseArea').prepend(palabraCard);
+            }
+
             mostrarCargando();
 
             const headers = {
