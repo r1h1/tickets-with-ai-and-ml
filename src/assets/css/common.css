@@ -151,6 +151,48 @@ textarea {
     color: white;
 }
 
+/* ======= Mejora visual de aviso inicial ======= */
+.bot-description {
+    font-size: 1rem;
+    color: #546e7a;
+    line-height: 1.6;
+}
+
+/* ======= Respuestas del Bot ======= */
+.message-card.bg-warning {
+    background-color: #fff3cd !important;
+    color: #856404 !important;
+    border-left: 4px solid #ffecb5;
+}
+
+.message-card.bg-danger {
+    background-color: #f8d7da !important;
+    color: #721c24 !important;
+    border-left: 4px solid #f5c6cb;
+}
+
+.message-card.bg-light.border {
+    background-color: #f1f3f5 !important;
+    border-left: 4px solid #90caf9;
+}
+
+/* ======= Placeholder de textarea más claro ======= */
+textarea::placeholder {
+    color: #b0bec5;
+    font-style: italic;
+}
+
+/* ======= Ajustes responsive para texto y botón ======= */
+@media (max-width: 768px) {
+    .btn-secondary {
+        width: 100%;
+    }
+
+    .input-box {
+        padding: 1rem;
+    }
+}
+
 /* ======= Responsive Sidebar ======= */
 @media (max-width: 768px) {
     .sidebar {
