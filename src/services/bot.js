@@ -39,12 +39,49 @@ function mostrarAviso(tipo, mensaje) {
     document.getElementById('responseArea').prepend(aviso);
 }
 
+// Toast container y notificaciones visuales
+const crearToastContainer = () => {
+    if (!document.getElementById('toast-container')) {
+        const toastContainer = document.createElement('div');
+        toastContainer.id = 'toast-container';
+        toastContainer.className = 'position-fixed top-0 start-50 translate-middle-x p-3';
+        toastContainer.style.zIndex = '1100';
+        document.body.appendChild(toastContainer);
+    }
+};
+
+const mostrarToast = (mensaje, tipo = 'danger') => {
+    crearToastContainer();
+    const toastWrapper = document.createElement('div');
+    toastWrapper.className = 'toast align-items-center text-white border-0 show';
+
+    const colorMap = {
+        success: 'bg-success',
+        warning: 'bg-warning text-dark',
+        danger: 'bg-danger',
+        info: 'bg-info text-dark'
+    };
+
+    toastWrapper.classList.add(colorMap[tipo] || 'bg-secondary');
+
+    toastWrapper.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${mensaje}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+
+    document.getElementById('toast-container').appendChild(toastWrapper);
+
+    setTimeout(() => {
+        toastWrapper.remove();
+    }, 8000);
+};
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
-    // Contador de mensajes
     sessionStorage.setItem('contadorMensajes', sessionStorage.getItem('contadorMensajes') || '0');
 
-    // Lógica del formulario
     document.getElementById('formBot')?.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -78,11 +115,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             document.getElementById('loadingCard')?.remove();
             mostrarAviso('danger', 'Error al contactar al bot. Intenta de nuevo más tarde.');
-            console.error("Error:", error);
         }
     });
 
-    // Asignar fecha por defecto si el input existe
     const fechaInput = document.getElementById('fecha');
     if (fechaInput) {
         const today = new Date();
@@ -92,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         fechaInput.value = `${year}-${month}-${day}`;
     }
 
-    // Mostrar modal de nuevo ticket
     const btnNuevoTicket = document.querySelector('button.btn.btn-secondary');
     const modalNuevoTicket = document.getElementById('modalNuevoTicket');
     if (btnNuevoTicket && modalNuevoTicket) {
@@ -102,25 +136,38 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Clasificar ticket al guardarlo desde modal
     const btnGuardar = document.querySelector('#modalNuevoTicket .modal-footer .btn.btn-secondary:last-child');
     btnGuardar?.addEventListener('click', async () => {
         const asunto = document.getElementById('asunto').value.trim();
         const descripcion = document.getElementById('descripcion').value.trim();
+        const fecha = document.getElementById('fecha').value;
+        const nombre = document.getElementById('nombre').value;
 
-        if (!asunto || !descripcion) {
-            alert('Por favor completa el asunto y la descripción.');
+        if (!fecha || !nombre || !asunto || !descripcion) {
+            mostrarToast('Todos los campos son obligatorios.', 'warning');
             return;
         }
 
         try {
-            const resultadoIA = await clasificarTicketIA(asunto, descripcion);
-            sessionStorage.setItem('ticketClasificado', JSON.stringify(resultadoIA));
-            alert(`Ticket clasificado como: ${resultadoIA.prioridad}\nCategoría sugerida: ${resultadoIA.categoria}`);
-            console.log("Resultado IA:", resultadoIA);
+            const resultado = await clasificarTicketIA(asunto, descripcion);
+            sessionStorage.setItem('ticketClasificado', JSON.stringify(resultado));
+
+            if (
+                resultado.razonamiento === 'El modelo de IA no respondió. Resolver manualmente.' ||
+                resultado.razonamiento === 'Error inesperado en la petición IA. Resolver manualmente.'
+            ) {
+                mostrarToast('El ticket fue creado, pero debe ser clasificado manualmente.', 'warning');
+            } else {
+                mostrarToast(`Ticket creado correctamente, se clasificó como ${resultado.prioridad} 
+                y se otorgó una lista de pasos para el equipo de soporte.`, 'success');
+            }
+
+            const modalElement = document.getElementById('modalNuevoTicket');
+            const modalInstance = bootstrap.Modal.getInstance(modalElement);
+            modalInstance?.hide();
+
         } catch (error) {
-            console.error("Error al clasificar el ticket:", error);
-            alert("Ocurrió un error al contactar con la IA. Intenta nuevamente más tarde.");
+            mostrarToast('Error inesperado al procesar el ticket.', 'danger');
         }
     });
 });

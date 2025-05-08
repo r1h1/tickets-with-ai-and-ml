@@ -1,28 +1,26 @@
 import {
     API_IA_URL_BASE,
-    API_IA_KEY_1,
-    API_IA_KEY_2,
-    API_IA_KEY_3,
-    API_IA_KEY_4,
-    API_IA_KEY_5
+    API_IA_KEYS,
+    IA_MODELS
 } from "../config/constants.js";
-import {IA_PROMPT_BASE} from "../config/prompts.js";
+import { IA_PROMPT_BASE } from "../config/prompts.js";
 
-const API_KEYS = [
-    API_IA_KEY_1,
-    API_IA_KEY_2,
-    API_IA_KEY_3,
-    API_IA_KEY_4,
-    API_IA_KEY_5
-];
-
+// Round robin para keys
 let currentKeyIndex = parseInt(sessionStorage.getItem('apiKeyIndex')) || 0;
-
 function getNextApiKey() {
-    const key = API_KEYS[currentKeyIndex];
-    currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+    const key = API_IA_KEYS[currentKeyIndex];
+    currentKeyIndex = (currentKeyIndex + 1) % API_IA_KEYS.length;
     sessionStorage.setItem('apiKeyIndex', currentKeyIndex);
     return key;
+}
+
+// Round robin para modelos IA
+let currentModelIndex = parseInt(sessionStorage.getItem('modelIndex')) || 0;
+function getNextModel() {
+    const model = IA_MODELS[currentModelIndex];
+    currentModelIndex = (currentModelIndex + 1) % IA_MODELS.length;
+    sessionStorage.setItem('modelIndex', currentModelIndex);
+    return model;
 }
 
 const palabrasClaveTecnicas = [
@@ -42,16 +40,10 @@ export function contienePalabraTecnica(texto) {
 
 export async function consultarBotIA(mensaje) {
     const body = {
-        model: 'deepseek/deepseek-r1:free',
+        model: getNextModel(),
         messages: [
-            {
-                role: 'system',
-                content: IA_PROMPT_BASE.supportBot
-            },
-            {
-                role: 'user',
-                content: mensaje
-            }
+            { role: 'system', content: IA_PROMPT_BASE.supportBot },
+            { role: 'user', content: mensaje }
         ]
     };
 
@@ -86,9 +78,9 @@ export async function clasificarTicketIA(asunto, descripcion) {
     promptData.ticket_actual.descripcion = descripcion;
 
     const body = {
-        model: 'deepseek/deepseek-r1:free',
+        model: getNextModel(),
         messages: [
-            {role: 'user', content: JSON.stringify(promptData)}
+            { role: 'user', content: JSON.stringify(promptData) }
         ]
     };
 
@@ -107,7 +99,6 @@ export async function clasificarTicketIA(asunto, descripcion) {
         const data = await res.json();
 
         if (data.error) {
-            console.warn("Clasificador IA desactivado:", data.error.message);
             const fallback = {
                 prioridad: "media",
                 categoria: "sin_clasificar",
@@ -121,8 +112,7 @@ export async function clasificarTicketIA(asunto, descripcion) {
         }
 
         const respuesta = data.choices?.[0]?.message?.content || "{}";
-
-        let textoLimpio = respuesta
+        const textoLimpio = respuesta
             .replace(/```json/g, '')
             .replace(/```/g, '')
             .replace(/\\n/g, '')
@@ -132,9 +122,9 @@ export async function clasificarTicketIA(asunto, descripcion) {
             .trim();
 
         const jsonResult = JSON.parse(textoLimpio);
-
         sessionStorage.setItem("ticketClasificado", JSON.stringify(jsonResult));
         return jsonResult;
+
     } catch (e) {
         const fallback = {
             prioridad: "media",
