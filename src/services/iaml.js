@@ -76,7 +76,6 @@ export async function consultarBotIA(mensaje) {
 
         return data.choices?.[0]?.message?.content || "Sin respuesta de IA.";
     } catch (error) {
-        console.error("Error en consultarBotIA:", error);
         return "No se pudo utilizar el bot por un error inesperado.";
     }
 }
@@ -137,7 +136,6 @@ export async function clasificarTicketIA(asunto, descripcion) {
         sessionStorage.setItem("ticketClasificado", JSON.stringify(jsonResult));
         return jsonResult;
     } catch (e) {
-        console.error("Error en clasificarTicketIA:", e);
         const fallback = {
             prioridad: "media",
             categoria: "sin_clasificar",

@@ -21,20 +21,16 @@ document.querySelector('#modalNuevoTicket .modal-footer .btn.btn-secondary:last-
         const descripcion = document.getElementById('descripcion').value.trim();
 
         if (!asunto || !descripcion) {
-            alert('Por favor completa el asunto y la descripción.');
             return;
         }
 
         try {
             const resultadoIA = await clasificarTicketIA(asunto, descripcion);
             sessionStorage.setItem('ticketClasificado', JSON.stringify(resultadoIA));
-            alert(`Ticket clasificado como: ${resultadoIA.prioridad}\nPuedes revisar en consola.`);
-            console.log("Resultado IA:", resultadoIA);
 
             // Aquí podrías insertar el ticket en la tabla o redirigir al listado
         } catch (error) {
             console.error("Error al clasificar el ticket:", error);
-            alert("Ocurrió un error al contactar con la IA. Intenta nuevamente más tarde.");
         }
 
     });
