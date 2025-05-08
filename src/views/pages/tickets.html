@@ -64,8 +64,9 @@
                                        placeholder="Describe el asunto">
                             </div>
                             <div class="mb-3">
-                                <label for="estado" class="form-label">Estado</label>
-                                <input type="text" class="form-control rounded-3" id="estado" value="Nuevo" readonly>
+                                <label for="asunto" class="form-label">Descripción del problema</label>
+                                <textarea class="form-control" rows="3" id="descripcion"
+                                          placeholder="Describe tu problema técnico" required></textarea>
                             </div>
                             <div class="mb-3">
                                 <label for="categoria" class="form-label">Categoría</label>
@@ -142,26 +143,6 @@
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const fechaInput = document.getElementById('fecha');
-
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = String(today.getMonth() + 1).padStart(2, '0'); // enero = 0
-        const day = String(today.getDate()).padStart(2, '0');
-
-        // Formato correcto para <input type="date">: YYYY-MM-DD
-        const fechaFormateada = `${year}-${month}-${day}`;
-        fechaInput.value = fechaFormateada;
-
-        // Mostrar el modal
-        document.querySelector('button.btn.btn-secondary').addEventListener('click', () => {
-            const modal = new bootstrap.Modal(document.getElementById('modalNuevoTicket'));
-            modal.show();
-        });
-    });
-</script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
@@ -178,18 +159,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
-<script>
-    $(document).ready(function () {
-        $('#ticketTable').DataTable({
-            dom: 'Bfrtip',
-            buttons: [
-                'copy', 'excel', 'pdf', 'print'
-            ],
-            language: {
-                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-            }
-        });
-    });
-</script>
+<script src="../../utils/init.js" type="module"></script>
+<script src="../../services/ticket.js" type="module"></script>
 </body>
 </html>
