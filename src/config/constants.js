@@ -1,12 +1,17 @@
+// Constante para consumo de APIs para support ia ml
 const API_URL_BASE = 'https://supportiaml.somee.com';
-const API_IA_URL_BASE = 'https://openrouter.ai/api/v1/chat/completions';
 
+// Constante para consumo de API openrouter IA / ML
+const API_IA_URL_BASE = 'https://openrouter.ai/api/v1/chat/completions';
 const API_IA_KEYS = [
     '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'
 ];
 
-// Lista de modelos gratuitos confirmados en OpenRouter que no consumen tokens (verificá regularmente)
+// Modelos gratuitos confirmados, multilingües y con buen soporte para español
 const IA_MODELS = [
+    'meta-llama/llama-4-maverick:free',
+    'meta-llama/llama-4-scout:free',
+    'mistralai/mistral-small-3.1-24b-instruct:free',
     'deepseek/deepseek-r1:free',
     'nousresearch/deephermes-3-mistral-24b-preview:free',
     'opengvlab/internvl3-14b:free',
