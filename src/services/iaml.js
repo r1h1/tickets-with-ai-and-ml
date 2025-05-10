@@ -3,10 +3,11 @@ import {
     API_IA_KEYS,
     IA_MODELS
 } from "../config/constants.js";
-import { IA_PROMPT_BASE } from "../config/prompts.js";
+import {IA_PROMPT_BASE} from "../config/prompts.js";
 
 // Round robin para keys
 let currentKeyIndex = parseInt(sessionStorage.getItem('apiKeyIndex')) || 0;
+
 function getNextApiKey() {
     const key = API_IA_KEYS[currentKeyIndex];
     currentKeyIndex = (currentKeyIndex + 1) % API_IA_KEYS.length;
@@ -16,6 +17,7 @@ function getNextApiKey() {
 
 // Round robin para modelos IA
 let currentModelIndex = parseInt(sessionStorage.getItem('modelIndex')) || 0;
+
 function getNextModel() {
     const model = IA_MODELS[currentModelIndex];
     currentModelIndex = (currentModelIndex + 1) % IA_MODELS.length;
@@ -31,7 +33,8 @@ const palabrasClaveTecnicas = [
     'memoria', 'ram', 'disco', 'bios', 'usb', 'ethernet', 'vpn', 'ping', 'proxy',
     'chrome', 'firefox', 'safari', 'bluetooth', 'login', 'sesión', 'seguridad', 'virus',
     'phishing', 'spyware', 'software', 'hardware', 'bios', 'actualizar', 'touch', 'solucionar',
-    'gestionar', 'update', 'bocina', 'proyecto', 'lenguaje', 'hora', 'ssd', 'navegador'
+    'gestionar', 'update', 'bocina', 'proyecto', 'lenguaje', 'hora', 'ssd', 'navegador',
+    'web', 'whatsapp', 'pc'
 ];
 
 export function contienePalabraTecnica(texto) {
@@ -42,8 +45,8 @@ export async function consultarBotIA(mensaje) {
     const body = {
         model: getNextModel(),
         messages: [
-            { role: 'system', content: IA_PROMPT_BASE.supportBot },
-            { role: 'user', content: mensaje }
+            {role: 'system', content: IA_PROMPT_BASE.supportBot},
+            {role: 'user', content: mensaje}
         ]
     };
 
@@ -62,8 +65,9 @@ export async function consultarBotIA(mensaje) {
         const data = await res.json();
 
         if (data.error) {
+            sessionStorage.removeItem("contadorMensajes");
             console.warn("Bot IA desactivado temporalmente:", data.error.message);
-            return "No se pudo utilizar el bot por uso excesivo de IA. Intenta más tarde o crea un ticket para un humano.";
+            return "El bot no pudo comunicarse. Intenta nuevamente con la misma pregunta o crea un ticket y un agente humano te atenderá.";
         }
 
         return data.choices?.[0]?.message?.content || "Sin respuesta de IA.";
@@ -80,7 +84,7 @@ export async function clasificarTicketIA(asunto, descripcion) {
     const body = {
         model: getNextModel(),
         messages: [
-            { role: 'user', content: JSON.stringify(promptData) }
+            {role: 'user', content: JSON.stringify(promptData)}
         ]
     };
 

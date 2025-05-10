@@ -27,7 +27,7 @@ function mostrarCargando() {
     const loadingCard = document.createElement('div');
     loadingCard.className = 'message-card bg-light border';
     loadingCard.id = 'loadingCard';
-    loadingCard.innerHTML = `<strong>Bot:</strong><br>Espera un momento, el bot está trabajando en una respuesta...`;
+    loadingCard.innerHTML = `<strong>Bot:</strong><br>Espera un momento, el bot está trabajando en una respuesta, esto puede demorar bastante tiempo, ¡ten paciencia!...`;
     document.getElementById('responseArea').prepend(loadingCard);
 }
 
