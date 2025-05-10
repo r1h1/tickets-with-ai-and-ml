@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Detalle Ticket</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../assets/css/common.css">
+</head>
+<body>
+<nav class="navbar px-3 d-flex justify-content-between">
+    <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <a href="../../../index.html" class="btn btn-secondary">Cerrar Sesión</a>
+</nav>
+<div class="d-flex">
+    <div class="sidebar" id="sidebar">
+        <div class="px-3 mt-5">
+            <a href="start.html">Dashboard</a>
+            <a href="bot.html">Base de Conocimiento (Bot)</a>
+            <a href="tickets.html" class="active">Tickets</a>
+            <a href="categorias.html">Categorias</a>
+            <a href="usuarios.html">Usuarios</a>
+            <a href="roles.html">Roles</a>
+        </div>
+    </div>
+    <div class="container-fluid p-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">Detalle #8VT-PZU-BRG9</h5>
+            <div>
+                <button class="btn btn-secondary me-2" data-bs-toggle="modal" data-bs-target="#modalAsignarAgente">
+                    Asignar un agente manual
+                </button>
+                <a href="tickets.html" class="btn btn-secondary">Regresar a "Tickets"</a>
+            </div>
+        </div>
+
+        <p class="text-secondary mb-4">
+            Asignación automática de prioridad según requerimiento de usuario, agente sugerido según dificultad,
+            razonamiento de requerimiento, pasos de solución para resolución y palabras clave extraídas.
+            Permite asignación autónoma a través del bot o manual según disponibilidad y nivel de seniority.
+        </p>
+
+        <div class="row">
+            <!-- Sugerencia del Bot -->
+            <div class="col-sm-12 col-md-6 mb-2">
+                <div class="bot-card h-auto">
+                    <h5 class="mb-4">Sugerencia del Bot</h5>
+                    <p><strong>Prioridad:</strong> <span id="ticket-priority" class="priority-tag">Crítica</span></p>
+                    <p><strong>Categoría:</strong> <span id="ticket-category"></span></p>
+                    <p><strong>Agente Sugerido:</strong> <span id="bot-agent"></span></p>
+                    <p><strong>Razonamiento: </strong><span id="bot-reasoning"></span></p>
+                    <p><strong>Pasos para solución: </strong><span id="bot-solution"></span></p>
+                    <p><strong>Palabras Clave Detectadas: </strong><span id="bot-keywords"></span></p>
+                </div>
+            </div>
+
+            <!-- Información general, descripción y resolución -->
+            <div class="col-sm-12 col-md-6 mb-4">
+                <div class="card shadow-sm rounded-4 mb-2 p-4 h-auto">
+                    <h5 class="mb-4">Información General</h5>
+                    <p><strong>Asunto:</strong> <span id="ticket-title"></span></p>
+                    <p><strong>Estado:</strong> <span id="ticket-status"></span></p>
+                    <p><strong>Fecha de creación:</strong> <span id="ticket-date"></span></p>
+                    <p><strong>Creado por:</strong> <span id="ticket-created-by"></span></p>
+                    <p><strong>Asignado a:</strong> <span id="ticket-assigned-to"></span></p>
+                    <p><strong>Descripción: </strong><span id="ticket-description"></span></p>
+                </div>
+
+                <div class="card shadow-sm rounded-4 p-4 h-auto">
+                    <h5>Resolución</h5>
+                    <div class="mb-3">
+                        <label for="solucion" class="form-label">Solución Aplicada</label>
+                        <textarea id="solucion" class="form-control" rows="3" maxlength="249"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="estado" class="form-label">Cambiar Estado</label>
+                        <select id="estado" class="form-select">
+                            <option value="Nuevo">Nuevo</option>
+                            <option value="En Proceso">En Proceso</option>
+                            <option value="Resuelto">Resuelto</option>
+                            <option value="Cerrado">Cerrado</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-secondary">Guardar Cambios</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL ASIGNAR AGENTE -->
+<div class="modal fade" id="modalAsignarAgente" tabindex="-1" aria-labelledby="asignarAgenteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow-sm">
+            <div class="modal-header">
+                <h5 class="modal-title" id="asignarAgenteLabel">Asignar un agente manualmente</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formAsignarAgente">
+                    <div class="mb-3">
+                        <label for="nivelSoporte" class="form-label">Nivel de soporte</label>
+                        <select class="form-select rounded-3" id="nivelSoporte">
+                            <option selected disabled>Seleccionar nivel...</option>
+                            <option value="junior">SOPORTE JUNIOR</option>
+                            <option value="mid">SOPORTE MID</option>
+                            <option value="senior">SOPORTE SENIOR</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="agenteSoporte" class="form-label">Agente por nivel</label>
+                        <select class="form-select rounded-3" id="agenteSoporte">
+                            <option selected disabled>Seleccionar agente...</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-secondary">Asignar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const botData = JSON.parse(sessionStorage.getItem("ticketClasificado"));
+    if (botData) {
+        document.getElementById("bot-agent").textContent = botData.agente_sugerido.toUpperCase();
+        document.getElementById("bot-reasoning").textContent = botData.razonamiento;
+
+        const keywordsList = document.getElementById("bot-keywords");
+        if (botData.keywords_detectadas.length > 0) {
+            keywordsList.innerHTML = botData.keywords_detectadas.map(k => `<li>${k}</li>`).join('');
+        } else {
+            keywordsList.innerHTML = '<li>No se detectaron palabras clave</li>';
+        }
+
+        const solutionList = document.getElementById("bot-solution");
+        solutionList.innerHTML = botData.solucion.map(s => `<li>${s}</li>`).join('');
+    }
+
+    const agentesPorNivel = {
+        junior: ["Luis Pérez", "Andrea Gómez", "Carlos Soto"],
+        mid: ["Mario Cifuentes", "Lucía Ramírez"],
+        senior: ["Laura León", "Fernando Díaz"]
+    };
+
+    document.getElementById("nivelSoporte").addEventListener("change", function () {
+        const nivel = this.value;
+        const selectAgente = document.getElementById("agenteSoporte");
+        selectAgente.innerHTML = '<option disabled selected>Seleccionar agente</option>';
+        agentesPorNivel[nivel].forEach(nombre => {
+            const option = document.createElement("option");
+            option.textContent = nombre;
+            option.value = nombre;
+            selectAgente.appendChild(option);
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+<script src="../../utils/init.js" type="module"></script>
+</body>
+</html>
