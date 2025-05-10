@@ -31,7 +31,7 @@ export const IA_PROMPT_BASE = {
             {
                 categoria: "software",
                 asunto: "Poner música para evento",
-                descripcion: "Hola equipo de IT, echenme la mano para poder poner música en la cafetería para una actividad, gracias.",
+                descripcion: "Que onda IT, echenme la mano para poder poner música en la cafetería para una actividad, gracias.",
                 prioridad: "media",
                 agente_sugerido: "soporte junior",
                 razonamiento:
