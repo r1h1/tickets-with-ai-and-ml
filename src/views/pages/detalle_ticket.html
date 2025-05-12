@@ -56,7 +56,9 @@
             <div class="col-sm-12 col-md-6 mb-3">
                 <div class="bot-card h-auto">
                     <h5 class="mb-4">Sugerencia del Bot</h5>
-                    <p><strong>Prioridad:</strong> <span id="ticket-priority" class="priority-tag">Crítica</span></p>
+                    <p><strong>Fecha de creación:</strong> <span id="ticket-date"></span></p>
+                    <p><strong>Creado por:</strong> <span id="ticket-created-by"></span></p>
+                    <p><strong>Prioridad:</strong> <span id="ticket-priority" class="priority-tag"></span></p>
                     <p><strong>Categoría:</strong> <span id="ticket-category"></span></p>
                     <p><strong>Agente Sugerido:</strong> <span id="bot-agent"></span></p>
                     <p><strong>Razonamiento: </strong><span id="bot-reasoning"></span></p>
@@ -71,8 +73,6 @@
                     <h5 class="mb-4">Información General</h5>
                     <p><strong>Asunto:</strong> <span id="ticket-title"></span></p>
                     <p><strong>Estado:</strong> <span id="ticket-status"></span></p>
-                    <p><strong>Fecha de creación:</strong> <span id="ticket-date"></span></p>
-                    <p><strong>Creado por:</strong> <span id="ticket-created-by"></span></p>
                     <p><strong>Asignado a:</strong> <span id="ticket-assigned-to"></span></p>
                     <p><strong>Descripción: </strong><span id="ticket-description"></span></p>
                 </div>
@@ -139,6 +139,32 @@
     if (botData) {
         document.getElementById("bot-agent").textContent = botData.agente_sugerido.toUpperCase();
         document.getElementById("bot-reasoning").textContent = botData.razonamiento;
+        document.getElementById("ticket-priority").textContent = botData.prioridad.toUpperCase();
+
+        // ======= NUEVO: aplicar color según prioridad =======
+        const prioridad = botData.prioridad.toLowerCase();
+        const prioridadTag = document.getElementById("ticket-priority");
+
+        prioridadTag.classList.remove("priority-low", "priority-medium", "priority-high", "priority-critical");
+
+        switch (prioridad) {
+            case "baja":
+                prioridadTag.classList.add("priority-low");
+                break;
+            case "media":
+                prioridadTag.classList.add("priority-medium");
+                break;
+            case "alta":
+                prioridadTag.classList.add("priority-high");
+                break;
+            case "crítica":
+            case "critica":
+                prioridadTag.classList.add("priority-critical");
+                break;
+            default:
+                prioridadTag.classList.add("bg-secondary", "text-white");
+                break;
+        }
 
         const keywordsList = document.getElementById("bot-keywords");
         if (botData.keywords_detectadas.length > 0) {
