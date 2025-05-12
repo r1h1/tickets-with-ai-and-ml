@@ -4,7 +4,8 @@ const API_URL_BASE = 'https://supportiaml.somee.com';
 // Constante para consumo de API openrouter IA / ML
 const API_IA_URL_BASE = 'https://openrouter.ai/api/v1/chat/completions';
 const API_IA_KEYS = [
-    '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'
+    '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',
+    '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'
 ];
 
 // Modelos gratuitos confirmados, multilingües y con buen soporte para español

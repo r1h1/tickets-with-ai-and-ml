@@ -34,7 +34,8 @@ const palabrasClaveTecnicas = [
     'chrome', 'firefox', 'safari', 'bluetooth', 'login', 'sesión', 'seguridad', 'virus',
     'phishing', 'spyware', 'software', 'hardware', 'bios', 'actualizar', 'touch', 'solucionar',
     'gestionar', 'update', 'bocina', 'proyecto', 'lenguaje', 'hora', 'ssd', 'navegador',
-    'web', 'whatsapp', 'pc'
+    'web', 'whatsapp', 'pc', 'virtual', 'virtualizar', 'ubuntu', 'boot', 'espacio', 'almacenamiento',
+    'cargador', 'datos', 'empresarial', 'no funciona', 'problema', 'clavo', 'apoyo', 'support'
 ];
 
 export function contienePalabraTecnica(texto) {
