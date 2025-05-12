@@ -76,7 +76,7 @@ body {
 }
 
 .card-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: #546E7A;
 }
 
@@ -137,7 +137,7 @@ table td {
 .input-box {
     background-color: #ffffff;
     border-radius: 12px;
-    padding: 1.25rem;
+    padding: 1rem;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
@@ -159,22 +159,22 @@ textarea {
 
 .priority-critical {
     background-color: #d32f2f;
-    color: white;
+    color: #FFFFFF;
 }
 
 .priority-high {
     background-color: #fbc02d;
-    color: black;
+    color: #000000;
 }
 
 .priority-medium {
     background-color: #388e3c;
-    color: white;
+    color: #FFFFFF;
 }
 
 .priority-low {
     background-color: #1976d2;
-    color: white;
+    color: #FFFFFF;
 }
 
 /* ======= Mejora visual de aviso inicial ======= */
@@ -182,14 +182,6 @@ textarea {
     border: none;
     border-radius: 16px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-}
-
-.priority-tag {
-    background-color: #eceff1;
-    padding: 4px 12px;
-    border-radius: 50px;
-    font-size: 0.9rem;
-    font-weight: 500;
 }
 
 .bot-description {
@@ -229,6 +221,31 @@ textarea {
 textarea::placeholder {
     color: #b0bec5;
     font-style: italic;
+}
+
+
+/* ======= DataTables Export Buttons ======= */
+.dt-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    justify-content: flex-start;
+}
+
+.dt-button {
+    background-color: #546e7a !important;
+    color: #fff !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 8px 16px !important;
+    font-weight: 500 !important;
+    font-size: 0.875rem !important;
+    transition: background-color 0.3s ease;
+}
+
+.dt-button:hover {
+    background-color: #455a64 !important;
 }
 
 
