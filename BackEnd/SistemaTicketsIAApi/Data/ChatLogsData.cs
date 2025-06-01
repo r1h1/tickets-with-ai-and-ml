@@ -10,133 +10,177 @@ namespace SistemaTicketsIAApi.Data
 
         public ChatLogData(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration.GetConnectionString("CadenaSQL")
+                ?? throw new ArgumentNullException("CadenaSQL", "La cadena de conexión no está configurada.");
         }
 
+        // Obtener logs por TicketId
         public async Task<List<ChatLog>> ObtenerPorTicketId()
         {
             var lista = new List<ChatLog>();
 
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("sp_chatLogSelectByTicketId", connection);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            await connection.OpenAsync();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
+            try
             {
-                lista.Add(new ChatLog
+                await using var connection = new SqlConnection(_connectionString);
+                await using var command = new SqlCommand("sp_chatLogSelectByTicketId", connection)
                 {
-                    LogId = Convert.ToInt32(reader["LogId"]),
-                    TicketId = Convert.ToInt32(reader["TicketId"]),
-                    Question = reader["Question"].ToString() ?? string.Empty,
-                    Answer = reader["Answer"].ToString() ?? string.Empty,
-                    CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
-                });
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                await connection.OpenAsync();
+                await using var reader = await command.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    lista.Add(new ChatLog
+                    {
+                        LogId = Convert.ToInt32(reader["LogId"]),
+                        TicketId = Convert.ToInt32(reader["TicketId"]),
+                        Question = reader["Question"]?.ToString() ?? string.Empty,
+                        Answer = reader["Answer"]?.ToString() ?? string.Empty,
+                        CreatedAt = reader["CreatedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["CreatedAt"])
+                    });
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw new Exception("Error de base de datos al obtener los logs del ticket.", sqlEx);
             }
 
             return lista;
         }
 
+        // Obtener log por ID
         public async Task<ChatLog?> ObtenerPorId(int logId)
         {
-            ChatLog? item = null;
-
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("sp_chatLogSelectById", connection);
-            cmd.CommandType = CommandType.StoredProcedure;
-            cmd.Parameters.AddWithValue("@LogId", logId);
-
-            await connection.OpenAsync();
-            using SqlDataReader reader = await cmd.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
+            try
             {
-                item = new ChatLog
+                await using var connection = new SqlConnection(_connectionString);
+                await using var command = new SqlCommand("sp_chatLogSelectById", connection)
                 {
-                    LogId = Convert.ToInt32(reader["LogId"]),
-                    TicketId = Convert.ToInt32(reader["TicketId"]),
-                    Question = reader["Question"].ToString() ?? string.Empty,
-                    Answer = reader["Answer"].ToString() ?? string.Empty,
-                    CreatedAt = Convert.ToDateTime(reader["CreatedAt"])
+                    CommandType = CommandType.StoredProcedure
                 };
+
+                command.Parameters.AddWithValue("@LogId", logId);
+                await connection.OpenAsync();
+
+                await using var reader = await command.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    return new ChatLog
+                    {
+                        LogId = Convert.ToInt32(reader["LogId"]),
+                        TicketId = Convert.ToInt32(reader["TicketId"]),
+                        Question = reader["Question"]?.ToString() ?? string.Empty,
+                        Answer = reader["Answer"]?.ToString() ?? string.Empty,
+                        CreatedAt = reader["CreatedAt"] == DBNull.Value ? null : Convert.ToDateTime(reader["CreatedAt"])
+                    };
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw;
             }
 
-            return item;
+            return null;
         }
 
+        // Crear log
         public async Task<ChatLog> Crear(ChatLog modelo)
         {
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("sp_chatLogInsert", connection);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@TicketId", modelo.TicketId);
-            cmd.Parameters.AddWithValue("@Question", modelo.Question);
-            cmd.Parameters.AddWithValue("@Answer", modelo.Answer);
-
-            SqlParameter pId = new SqlParameter("@NewLogId", SqlDbType.Int)
+            try
             {
-                Direction = ParameterDirection.Output
-            };
-            SqlParameter pSuccess = new SqlParameter("@Success", SqlDbType.Bit)
+                await using var connection = new SqlConnection(_connectionString);
+                await using var command = new SqlCommand("sp_chatLogInsert", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                command.Parameters.AddWithValue("@TicketId", modelo.TicketId);
+                command.Parameters.AddWithValue("@Question", modelo.Question);
+                command.Parameters.AddWithValue("@Answer", modelo.Answer);
+
+                var paramId = new SqlParameter("@NewLogId", SqlDbType.Int) { Direction = ParameterDirection.Output };
+                var paramSuccess = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+
+                command.Parameters.Add(paramId);
+                command.Parameters.Add(paramSuccess);
+
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+
+                modelo.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
+                modelo.NewLogId = modelo.Success == 1 ? Convert.ToInt32(paramId.Value) : null;
+            }
+            catch (SqlException sqlEx)
             {
-                Direction = ParameterDirection.Output
-            };
+                modelo.Success = 0;
+                modelo.NewLogId = null;
+                throw;
+            }
 
-            cmd.Parameters.Add(pId);
-            cmd.Parameters.Add(pSuccess);
-
-            await connection.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
-
-            modelo.NewLogId = (int?)pId.Value;
-            modelo.Success = (bool)pSuccess.Value ? 1 : 0;
             return modelo;
         }
 
+        // Editar log
         public async Task<ChatLog> Editar(ChatLog modelo)
         {
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("sp_chatLogUpdate", connection);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@LogId", modelo.LogId);
-            cmd.Parameters.AddWithValue("@Question", modelo.Question);
-            cmd.Parameters.AddWithValue("@Answer", modelo.Answer);
-
-            SqlParameter pSuccess = new SqlParameter("@Success", SqlDbType.Bit)
+            try
             {
-                Direction = ParameterDirection.Output
-            };
-            cmd.Parameters.Add(pSuccess);
+                await using var connection = new SqlConnection(_connectionString);
+                await using var command = new SqlCommand("sp_chatLogUpdate", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-            await connection.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
+                command.Parameters.AddWithValue("@LogId", modelo.LogId);
+                command.Parameters.AddWithValue("@Question", modelo.Question);
+                command.Parameters.AddWithValue("@Answer", modelo.Answer);
 
-            modelo.Success = (bool)pSuccess.Value ? 1 : 0;
+                var paramSuccess = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                command.Parameters.Add(paramSuccess);
+
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+
+                modelo.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
+            }
+            catch (SqlException sqlEx)
+            {
+                modelo.Success = 0;
+                throw;
+            }
+
             return modelo;
         }
 
+        // Eliminar log
         public async Task<ChatLog> Eliminar(ChatLog modelo)
         {
-            using SqlConnection connection = new SqlConnection(_connectionString);
-            using SqlCommand cmd = new SqlCommand("sp_chatLogLogicDelete", connection);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@LogId", modelo.LogId);
-
-            SqlParameter pSuccess = new SqlParameter("@Success", SqlDbType.Bit)
+            try
             {
-                Direction = ParameterDirection.Output
-            };
-            cmd.Parameters.Add(pSuccess);
+                await using var connection = new SqlConnection(_connectionString);
+                await using var command = new SqlCommand("sp_chatLogLogicDelete", connection)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-            await connection.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
+                command.Parameters.AddWithValue("@LogId", modelo.LogId);
 
-            modelo.Success = (bool)pSuccess.Value ? 1 : 0;
+                var paramSuccess = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                command.Parameters.Add(paramSuccess);
+
+                await connection.OpenAsync();
+                await command.ExecuteNonQueryAsync();
+
+                modelo.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
+            }
+            catch (SqlException sqlEx)
+            {
+                modelo.Success = 0;
+                throw;
+            }
+
             return modelo;
         }
     }

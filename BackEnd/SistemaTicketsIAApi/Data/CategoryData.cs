@@ -10,119 +10,187 @@ namespace SistemaTicketsIAApi.Data
 
         public CategoryData(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration.GetConnectionString("CadenaSQL")
+                ?? throw new ArgumentNullException("CadenaSQL", "La cadena de conexión no está configurada.");
         }
 
+        // Obtener todas las categorías
         public async Task<List<Category>> ObtenerTodos()
         {
             var categorias = new List<Category>();
 
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_categorySelectAll", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            await conn.OpenAsync();
-            using var reader = await cmd.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
+            try
             {
-                categorias.Add(new Category
+                await using var conn = new SqlConnection(_connectionString);
+                await using var cmd = new SqlCommand("sp_categorySelectAll", conn)
                 {
-                    CategoryId = Convert.ToInt32(reader["CategoryId"]),
-                    Name = reader["Name"].ToString(),
-                    Description = reader["Description"].ToString(),
-                    State = Convert.ToInt32(reader["State"])
-                });
+                    CommandType = CommandType.StoredProcedure
+                };
+
+                await conn.OpenAsync();
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                while (await reader.ReadAsync())
+                {
+                    categorias.Add(new Category
+                    {
+                        CategoryId = Convert.ToInt32(reader["CategoryId"]),
+                        Name = reader["Name"]?.ToString() ?? string.Empty,
+                        Description = reader["Description"]?.ToString() ?? string.Empty,
+                        State = Convert.ToInt32(reader["State"])
+                    });
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw new Exception("Error de base de datos al obtener las categorías.", sqlEx);
             }
 
             return categorias;
         }
 
-        public async Task<Category> ObtenerPorId(int id)
+        // Obtener categoría por ID
+        public async Task<Category?> ObtenerPorId(int id)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_categorySelectById", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
-
-            cmd.Parameters.AddWithValue("@CategoryId", id);
-
-            await conn.OpenAsync();
-            using var reader = await cmd.ExecuteReaderAsync();
-
-            if (await reader.ReadAsync())
+            try
             {
-                return new Category
+                await using var conn = new SqlConnection(_connectionString);
+                await using var cmd = new SqlCommand("sp_categorySelectById", conn)
                 {
-                    CategoryId = Convert.ToInt32(reader["CategoryId"]),
-                    Name = reader["Name"].ToString(),
-                    Description = reader["Description"].ToString(),
-                    State = Convert.ToInt32(reader["State"])
+                    CommandType = CommandType.StoredProcedure
                 };
+
+                cmd.Parameters.AddWithValue("@CategoryId", id);
+                await conn.OpenAsync();
+
+                await using var reader = await cmd.ExecuteReaderAsync();
+
+                if (await reader.ReadAsync())
+                {
+                    return new Category
+                    {
+                        CategoryId = Convert.ToInt32(reader["CategoryId"]),
+                        Name = reader["Name"]?.ToString() ?? string.Empty,
+                        Description = reader["Description"]?.ToString() ?? string.Empty,
+                        State = Convert.ToInt32(reader["State"])
+                    };
+                }
+            }
+            catch (SqlException sqlEx)
+            {
+                throw new Exception("Error de base de datos al obtener la categoría.", sqlEx);
             }
 
             return null;
         }
 
+        // Crear categoría
         public async Task<Category> Crear(Category categoria)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_categoryInsert", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                await using var conn = new SqlConnection(_connectionString);
+                await using var cmd = new SqlCommand("sp_categoryInsert", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-            cmd.Parameters.AddWithValue("@Name", categoria.Name);
-            cmd.Parameters.AddWithValue("@Description", categoria.Description);
+                cmd.Parameters.AddWithValue("@Name", categoria.Name);
+                cmd.Parameters.AddWithValue("@Description", categoria.Description);
 
-            var idOut = new SqlParameter("@NewCategoryId", SqlDbType.Int) { Direction = ParameterDirection.Output };
-            var successOut = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
+                var paramId = new SqlParameter("@NewCategoryId", SqlDbType.Int)
+                {
+                    Direction = ParameterDirection.Output
+                };
 
-            cmd.Parameters.Add(idOut);
-            cmd.Parameters.Add(successOut);
+                var paramSuccess = new SqlParameter("@Success", SqlDbType.Bit)
+                {
+                    Direction = ParameterDirection.Output
+                };
 
-            await conn.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
+                cmd.Parameters.Add(paramId);
+                cmd.Parameters.Add(paramSuccess);
 
-            categoria.NewCategoryId = (int?)idOut.Value;
-            categoria.Success = (bool?)successOut.Value == true ? 1 : 0;
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
+
+                categoria.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
+                categoria.NewCategoryId = categoria.Success == 1 ? Convert.ToInt32(paramId.Value) : null;
+            }
+            catch (SqlException sqlEx)
+            {
+                categoria.Success = 0;
+                categoria.NewCategoryId = null;
+                throw;
+            }
 
             return categoria;
         }
 
+        // Editar categoría
         public async Task<Category> Editar(Category categoria)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_categoryUpdate", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                await using var conn = new SqlConnection(_connectionString);
+                await using var cmd = new SqlCommand("sp_categoryUpdate", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-            cmd.Parameters.AddWithValue("@CategoryId", categoria.CategoryId);
-            cmd.Parameters.AddWithValue("@Name", categoria.Name);
-            cmd.Parameters.AddWithValue("@Description", categoria.Description);
+                cmd.Parameters.AddWithValue("@CategoryId", categoria.CategoryId);
+                cmd.Parameters.AddWithValue("@Name", categoria.Name);
+                cmd.Parameters.AddWithValue("@Description", categoria.Description);
 
-            var successOut = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
-            cmd.Parameters.Add(successOut);
+                var paramSuccess = new SqlParameter("@Success", SqlDbType.Bit)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                cmd.Parameters.Add(paramSuccess);
 
-            await conn.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
 
-            categoria.Success = (bool?)successOut.Value == true ? 1 : 0;
+                categoria.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
+            }
+            catch (SqlException sqlEx)
+            {
+                categoria.Success = 0;
+                throw;
+            }
 
             return categoria;
         }
 
+        // Eliminar categoría (lógica)
         public async Task<Category> Eliminar(Category categoria)
         {
-            using var conn = new SqlConnection(_connectionString);
-            using var cmd = new SqlCommand("sp_categoryLogicDelete", conn);
-            cmd.CommandType = CommandType.StoredProcedure;
+            try
+            {
+                await using var conn = new SqlConnection(_connectionString);
+                await using var cmd = new SqlCommand("sp_categoryLogicDelete", conn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
-            cmd.Parameters.AddWithValue("@CategoryId", categoria.CategoryId);
+                cmd.Parameters.AddWithValue("@CategoryId", categoria.CategoryId);
 
-            var successOut = new SqlParameter("@Success", SqlDbType.Bit) { Direction = ParameterDirection.Output };
-            cmd.Parameters.Add(successOut);
+                var paramSuccess = new SqlParameter("@Success", SqlDbType.Bit)
+                {
+                    Direction = ParameterDirection.Output
+                };
+                cmd.Parameters.Add(paramSuccess);
 
-            await conn.OpenAsync();
-            await cmd.ExecuteNonQueryAsync();
+                await conn.OpenAsync();
+                await cmd.ExecuteNonQueryAsync();
 
-            categoria.Success = (bool?)successOut.Value == true ? 1 : 0;
+                categoria.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
+            }
+            catch (SqlException sqlEx)
+            {
+                categoria.Success = 0;
+                throw;
+            }
 
             return categoria;
         }

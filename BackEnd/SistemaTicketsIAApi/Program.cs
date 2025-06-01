@@ -54,11 +54,8 @@ builder.Services.AddSingleton<AuthData>();
 var app = builder.Build();
 
 // Configuración del pipeline HTTP
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+app.UseSwagger();
+app.UseSwaggerUI();
 
 app.UseCors("NuevaPolitica");
 

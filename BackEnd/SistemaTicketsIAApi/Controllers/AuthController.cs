@@ -75,6 +75,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpPost("Registrar")]
+        [Authorize]
         public async Task<IActionResult> Registrar([FromBody] AuthRegisterRequest request)
         {
             if (string.IsNullOrEmpty(request.Password))

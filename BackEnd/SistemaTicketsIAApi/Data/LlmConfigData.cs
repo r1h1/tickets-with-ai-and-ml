@@ -114,11 +114,11 @@ namespace SistemaTicketsIAApi.Data
                     objeto.NewLLMId = null;
                 }
             }
-            catch
+            catch (SqlException sqlEx)
             {
                 objeto.Success = 0;
                 objeto.NewLLMId = null;
-                throw;
+                throw new Exception("Error de base de datos al crear LLMConfig.", sqlEx);
             }
 
             return objeto;
@@ -149,10 +149,10 @@ namespace SistemaTicketsIAApi.Data
 
                 objeto.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
             }
-            catch
+            catch (SqlException sqlEx)
             {
                 objeto.Success = 0;
-                throw;
+                throw new Exception("Error de base de datos al editar LLMConfig.", sqlEx);
             }
 
             return objeto;
@@ -179,7 +179,7 @@ namespace SistemaTicketsIAApi.Data
 
                 objeto.Success = Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
             }
-            catch
+            catch (SqlException sqlEx)
             {
                 objeto.Success = 0;
                 throw;
@@ -211,9 +211,9 @@ namespace SistemaTicketsIAApi.Data
                 await command.ExecuteNonQueryAsync();
                 return Convert.ToBoolean(paramSuccess.Value) ? 1 : 0;
             }
-            catch
+            catch (SqlException sqlEx)
             {
-                return 0;
+                throw;
             }
         }
     }

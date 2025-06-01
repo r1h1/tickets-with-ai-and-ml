@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using SistemaTicketsIAApi.Data;
 using SistemaTicketsIAApi.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SistemaTicketsIAApi.Controllers
 {
@@ -19,6 +20,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ObtenerTodosLosUsuarios()
         {
             try
@@ -63,6 +65,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> ObtenerUsuarioPorId(int id)
         {
             try
@@ -107,6 +110,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CrearNuevoUsuario([FromBody] Users objeto)
         {
             if (!ModelState.IsValid)
@@ -161,6 +165,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> EditarUsuario([FromBody] Users objeto)
         {
             if (!ModelState.IsValid)
@@ -215,6 +220,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> EliminarUsuario([FromBody] Users objeto)
         {
             if (!ModelState.IsValid)

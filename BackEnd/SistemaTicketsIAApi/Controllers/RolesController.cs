@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using SistemaTicketsIAApi.Data;
@@ -19,6 +20,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ObtenerTodosLosRoles()
         {
             try
@@ -63,6 +65,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> ObtenerRolPorId(int id)
         {
             try
@@ -107,6 +110,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CrearNuevoRol([FromBody] Roles objeto)
         {
             if (!ModelState.IsValid)
@@ -161,6 +165,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> EditarRol([FromBody] Roles objeto)
         {
             if (!ModelState.IsValid)
@@ -215,6 +220,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> EliminarRol([FromBody] Roles objeto)
         {
             if (!ModelState.IsValid)

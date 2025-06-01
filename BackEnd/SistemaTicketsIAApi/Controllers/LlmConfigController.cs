@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SistemaTicketsIAApi.Data;
 using SistemaTicketsIAApi.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SistemaTicketsIAApi.Controllers
 {
@@ -18,6 +19,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ObtenerTodos()
         {
             try
@@ -46,13 +48,23 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error al obtener configuraciones.",
+                    message = "Error de base de datos al obtener configuraciones.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    success = false,
+                    message = "Ocurrió un error inesperado al obtener configuraciones.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             try
@@ -65,7 +77,7 @@ namespace SistemaTicketsIAApi.Controllers
                     {
                         success = false,
                         message = "No se encontró la configuración solicitada.",
-                        data = new { }
+                        data = (object)null
                     });
                 }
 
@@ -81,15 +93,35 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error al obtener configuración.",
+                    message = "Error de base de datos al obtener configuración.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    success = false,
+                    message = "Ocurrió un error inesperado al obtener configuración.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Crear([FromBody] LLMConfig objeto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos inválidos.",
+                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                });
+            }
+
             try
             {
                 objeto = await _llmData.CrearNuevo(objeto);
@@ -108,7 +140,7 @@ namespace SistemaTicketsIAApi.Controllers
                 {
                     success = false,
                     message = "No se pudo crear la configuración.",
-                    data = (object)null
+                    data = objeto
                 });
             }
             catch (SqlException ex)
@@ -116,15 +148,35 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al crear configuración.",
+                    message = "Error de base de datos al crear configuración.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    success = false,
+                    message = "Ocurrió un error inesperado al crear configuración.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Editar([FromBody] LLMConfig objeto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos inválidos.",
+                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                });
+            }
+
             try
             {
                 objeto = await _llmData.Editar(objeto);
@@ -143,7 +195,7 @@ namespace SistemaTicketsIAApi.Controllers
                 {
                     success = false,
                     message = "No se pudo editar la configuración.",
-                    data = (object)null
+                    data = objeto
                 });
             }
             catch (SqlException ex)
@@ -151,15 +203,35 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al editar configuración.",
+                    message = "Error de base de datos al editar configuración.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    success = false,
+                    message = "Ocurrió un error inesperado al editar configuración.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> Eliminar([FromBody] LLMConfig objeto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos inválidos.",
+                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                });
+            }
+
             try
             {
                 objeto = await _llmData.Eliminar(objeto);
@@ -178,7 +250,7 @@ namespace SistemaTicketsIAApi.Controllers
                 {
                     success = false,
                     message = "No se pudo eliminar la configuración.",
-                    data = (object)null
+                    data = objeto
                 });
             }
             catch (SqlException ex)
@@ -186,13 +258,23 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al eliminar configuración.",
+                    message = "Error de base de datos al eliminar configuración.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    success = false,
+                    message = "Ocurrió un error inesperado al eliminar configuración.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpPut("last-used/{id}")]
+        [Authorize]
         public async Task<IActionResult> ActualizarUltimoUso(int id)
         {
             try
@@ -221,7 +303,16 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error al actualizar fecha de último uso.",
+                    message = "Error de base de datos al actualizar fecha de último uso.",
+                    error = ex.Message
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new
+                {
+                    success = false,
+                    message = "Ocurrió un error inesperado al actualizar fecha de último uso.",
                     error = ex.Message
                 });
             }

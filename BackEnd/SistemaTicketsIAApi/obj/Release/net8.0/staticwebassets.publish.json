@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "/E9f9TiaaNL3o9OE4fM1OFuKkKwdklrFYc9rqpfNnUI=",
+  "Source": "SistemaTicketsIAApi",
+  "BasePath": "_content/SistemaTicketsIAApi",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}

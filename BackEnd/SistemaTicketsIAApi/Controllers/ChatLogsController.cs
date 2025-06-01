@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SistemaTicketsIAApi.Data;
 using SistemaTicketsIAApi.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SistemaTicketsIAApi.Controllers
 {
@@ -18,6 +19,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ObtenerPorTicketId()
         {
             try
@@ -46,7 +48,7 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error SQL al obtener logs.",
+                    message = "Error de base de datos al obtener logs.",
                     error = sqlEx.Message
                 });
             }
@@ -55,13 +57,14 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al obtener logs.",
+                    message = "Ocurrió un error inesperado al obtener logs.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> ObtenerPorId(int id)
         {
             try
@@ -90,7 +93,7 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error SQL al obtener el log.",
+                    message = "Error de base de datos al obtener el log.",
                     error = sqlEx.Message
                 });
             }
@@ -99,15 +102,26 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al obtener el log.",
+                    message = "Ocurrió un error inesperado al obtener el log.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> Crear([FromBody] ChatLog modelo)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos inválidos.",
+                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                });
+            }
+
             try
             {
                 modelo = await _chatLogData.Crear(modelo);
@@ -126,7 +140,7 @@ namespace SistemaTicketsIAApi.Controllers
                 {
                     success = false,
                     message = "No se pudo crear el log.",
-                    data = (object)null
+                    data = modelo
                 });
             }
             catch (SqlException sqlEx)
@@ -134,7 +148,7 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error SQL al crear el log.",
+                    message = "Error de base de datos al crear el log.",
                     error = sqlEx.Message
                 });
             }
@@ -143,15 +157,26 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al crear el log.",
+                    message = "Ocurrió un error inesperado al crear el log.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> Editar([FromBody] ChatLog modelo)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos inválidos.",
+                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                });
+            }
+
             try
             {
                 modelo = await _chatLogData.Editar(modelo);
@@ -170,7 +195,7 @@ namespace SistemaTicketsIAApi.Controllers
                 {
                     success = false,
                     message = "No se pudo editar el log.",
-                    data = (object)null
+                    data = modelo
                 });
             }
             catch (SqlException sqlEx)
@@ -178,7 +203,7 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error SQL al editar el log.",
+                    message = "Error de base de datos al editar el log.",
                     error = sqlEx.Message
                 });
             }
@@ -187,15 +212,26 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al editar el log.",
+                    message = "Ocurrió un error inesperado al editar el log.",
                     error = ex.Message
                 });
             }
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> Eliminar([FromBody] ChatLog modelo)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos inválidos.",
+                    errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)
+                });
+            }
+
             try
             {
                 modelo = await _chatLogData.Eliminar(modelo);
@@ -214,7 +250,7 @@ namespace SistemaTicketsIAApi.Controllers
                 {
                     success = false,
                     message = "No se pudo eliminar el log.",
-                    data = (object)null
+                    data = modelo
                 });
             }
             catch (SqlException sqlEx)
@@ -222,7 +258,7 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error SQL al eliminar el log.",
+                    message = "Error de base de datos al eliminar el log.",
                     error = sqlEx.Message
                 });
             }
@@ -231,7 +267,7 @@ namespace SistemaTicketsIAApi.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new
                 {
                     success = false,
-                    message = "Error inesperado al eliminar el log.",
+                    message = "Ocurrió un error inesperado al eliminar el log.",
                     error = ex.Message
                 });
             }

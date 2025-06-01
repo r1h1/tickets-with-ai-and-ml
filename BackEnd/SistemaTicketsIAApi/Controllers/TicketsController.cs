@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using SistemaTicketsIAApi.Data;
 using SistemaTicketsIAApi.Models;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 namespace SistemaTicketsIAApi.Controllers
 {
@@ -18,6 +19,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> ObtenerTodosLosTickets()
         {
             try
@@ -62,6 +64,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> ObtenerTicketPorId(int id)
         {
             try
@@ -106,6 +109,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public async Task<IActionResult> CrearNuevoTicket([FromBody] Ticket ticket)
         {
             try
@@ -150,6 +154,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public async Task<IActionResult> EditarTicket([FromBody] Ticket ticket)
         {
             try
@@ -194,6 +199,7 @@ namespace SistemaTicketsIAApi.Controllers
         }
 
         [HttpDelete]
+        [Authorize]
         public async Task<IActionResult> EliminarTicket([FromBody] Ticket ticket)
         {
             try
