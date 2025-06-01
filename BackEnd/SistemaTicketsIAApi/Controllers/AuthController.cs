@@ -35,19 +35,20 @@ namespace SistemaTicketsIAApi.Controllers
 
             var hashToCheck = BCrypt.Net.BCrypt.HashPassword(request.Password + user.Salt);
             if (!BCrypt.Net.BCrypt.Verify(request.Password + user.Salt, user.PasswordHash))
-                return Unauthorized(new { code = 401, message = "Contraseña incorrecta." });
+                return Unauthorized(new { code = 401, message = "Usuario y/o contraseña incorrecta." });
 
             var secretKey = _config.GetSection("settings")["secretkey"];
             if (string.IsNullOrEmpty(secretKey))
-                return StatusCode(500, new { message = "Clave secreta no configurada." });
+                return StatusCode(500, new { message = "Configuración del servidor incorrecta." });
 
             var key = Encoding.ASCII.GetBytes(secretKey);
 
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.Role, user.UserId == 1 ? "Admin" : "User")
+                new Claim(ClaimTypes.Role, user.RoleId?.ToString() ?? "")
             };
+
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {

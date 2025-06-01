@@ -50,15 +50,23 @@ END;
 GO
 
 -- SELECT TO LOGIN
-CREATE PROCEDURE sp_authSelectByUserId
+CREATEgit PROCEDURE sp_authSelectByUserId
     @UserId INT
-AS
+    AS
 BEGIN
     SET NOCOUNT ON;
 
-SELECT AuthId, UserId, PasswordHash, Salt, LastLogin, State
-FROM Auth
-WHERE UserId = @UserId AND State = 1;
+SELECT
+    a.AuthId,
+    a.UserId,
+    a.PasswordHash,
+    a.Salt,
+    a.LastLogin,
+    a.State,
+    u.RoleId
+FROM Auth a
+         INNER JOIN Users u ON a.UserId = u.UserId
+WHERE a.UserId = @UserId AND a.State = 1 AND u.State = 1;
 END;
 GO
 

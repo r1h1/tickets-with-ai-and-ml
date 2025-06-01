@@ -20,6 +20,8 @@ namespace SistemaTicketsIAApi.Models
         [Required(ErrorMessage = "Estado obligatorio.")]
         public int State { get; set; }
 
+        public int? RoleId { get; set; }
+
         public int? NewAuthId { get; set; }
         public int? Success { get; set; }
     }

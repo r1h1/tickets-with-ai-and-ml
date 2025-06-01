@@ -36,10 +36,12 @@ namespace SistemaTicketsIAApi.Data
                                 PasswordHash = reader["PasswordHash"].ToString()!,
                                 Salt = reader["Salt"].ToString()!,
                                 LastLogin = reader["LastLogin"] != DBNull.Value
-                                    ? Convert.ToDateTime(reader["LastLogin"])
-                                    : null,
-                                State = Convert.ToInt32(reader["State"])
+                                ? Convert.ToDateTime(reader["LastLogin"])
+                                : null,
+                                State = Convert.ToInt32(reader["State"]),
+                                RoleId = Convert.ToInt32(reader["RoleId"])
                             };
+
                         }
                     }
                 }
