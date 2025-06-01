@@ -1,0 +1,88 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|c:\\users\\pc\\desktop\\proyectos\\sistematicketsia\\backend\\sistematicketsiaapi\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|c:\\users\\pc\\desktop\\proyectos\\sistematicketsia\\backend\\sistematicketsiaapi\\models\\auth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|solutionrelative:models\\auth.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|c:\\users\\pc\\desktop\\proyectos\\sistematicketsia\\backend\\sistematicketsiaapi\\data\\authdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|solutionrelative:data\\authdata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|c:\\users\\pc\\desktop\\proyectos\\sistematicketsia\\backend\\sistematicketsiaapi\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8E5A7E34-306F-4620-AEA5-FB42B9EEB0C4}|SistemaTicketsIAApi.csproj|solutionrelative:controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\appsettings.json",
+              "RelativeDocumentMoniker": "appsettings.json",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\appsettings.json",
+              "RelativeToolTip": "appsettings.json",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2025-06-01T18:58:03.778Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Auth.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\Models\\Auth.cs",
+              "RelativeDocumentMoniker": "Models\\Auth.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\Models\\Auth.cs",
+              "RelativeToolTip": "Models\\Auth.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADEAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T18:57:20.17Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthData.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\Data\\AuthData.cs",
+              "RelativeDocumentMoniker": "Data\\AuthData.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\Data\\AuthData.cs",
+              "RelativeToolTip": "Data\\AuthData.cs",
+              "ViewState": "AgIAAHMAAAAAAAAAAAAAAJYAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T18:57:15.835Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "Controllers\\AuthController.cs",
+              "ToolTip": "C:\\Users\\PC\\Desktop\\Proyectos\\SistemaTicketsIA\\BackEnd\\SistemaTicketsIAApi\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "Controllers\\AuthController.cs",
+              "ViewState": "AgIAAFgAAAAAAAAAAAAqwHsAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-01T18:51:07.564Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

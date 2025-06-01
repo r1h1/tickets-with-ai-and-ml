@@ -1,0 +1,150 @@
+[
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.RolesController",
+    "Method": "ObtenerTodosLosRoles",
+    "RelativePath": "tickets/v1/Roles",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.RolesController",
+    "Method": "CrearNuevoRol",
+    "RelativePath": "tickets/v1/Roles",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "objeto",
+        "Type": "SistemaTicketsIAApi.Models.Roles",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.RolesController",
+    "Method": "EditarRol",
+    "RelativePath": "tickets/v1/Roles",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "objeto",
+        "Type": "SistemaTicketsIAApi.Models.Roles",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.RolesController",
+    "Method": "EliminarRol",
+    "RelativePath": "tickets/v1/Roles",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "objeto",
+        "Type": "SistemaTicketsIAApi.Models.Roles",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.RolesController",
+    "Method": "ObtenerRolPorId",
+    "RelativePath": "tickets/v1/Roles/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.UsersController",
+    "Method": "ObtenerTodosLosUsuarios",
+    "RelativePath": "tickets/v1/Users",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.UsersController",
+    "Method": "CrearNuevoUsuario",
+    "RelativePath": "tickets/v1/Users",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "objeto",
+        "Type": "SistemaTicketsIAApi.Models.Users",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.UsersController",
+    "Method": "EditarUsuario",
+    "RelativePath": "tickets/v1/Users",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "objeto",
+        "Type": "SistemaTicketsIAApi.Models.Users",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.UsersController",
+    "Method": "EliminarUsuario",
+    "RelativePath": "tickets/v1/Users",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "objeto",
+        "Type": "SistemaTicketsIAApi.Models.Users",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "SistemaTicketsIAApi.Controllers.UsersController",
+    "Method": "ObtenerUsuarioPorId",
+    "RelativePath": "tickets/v1/Users/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  }
+]

@@ -7,6 +7,7 @@ CREATE PROCEDURE sp_rolInsert
 AS
 BEGIN
     SET NOCOUNT ON;
+
 BEGIN TRY
 INSERT INTO Roles (RoleName, AssignedMenus)
         VALUES (@RoleName, @AssignedMenus);
@@ -17,6 +18,7 @@ END TRY
 BEGIN CATCH
 SET @NewRoleId = NULL;
         SET @Success = 0;
+        THROW;
 END CATCH
 END;
 GO
@@ -30,6 +32,7 @@ CREATE PROCEDURE sp_rolUpdate
 AS
 BEGIN
     SET NOCOUNT ON;
+
 BEGIN TRY
 UPDATE Roles
 SET RoleName = @RoleName,
@@ -40,6 +43,7 @@ SET @Success = IIF(@@ROWCOUNT > 0, 1, 0);
 END TRY
 BEGIN CATCH
 SET @Success = 0;
+        THROW;
 END CATCH
 END;
 GO
@@ -86,6 +90,7 @@ SET @Success = IIF(@@ROWCOUNT > 0, 1, 0);
 END TRY
 BEGIN CATCH
 SET @Success = 0;
+        THROW;
 END CATCH
 END;
 GO

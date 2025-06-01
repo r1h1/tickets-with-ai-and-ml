@@ -10,13 +10,12 @@ const API_IA_KEYS = [
 
 // Modelos gratuitos confirmados, multilingües y con buen soporte para español
 const IA_MODELS = [
-    'meta-llama/llama-4-maverick:free',
-    'meta-llama/llama-4-scout:free',
-    'mistralai/mistral-small-3.1-24b-instruct:free',
-    'deepseek/deepseek-r1:free',
-    'nousresearch/deephermes-3-mistral-24b-preview:free',
-    'opengvlab/internvl3-14b:free',
-    'deepseek/deepseek-prover-v2:free'
+    'meta-llama/llama-4-scout:free', //funciona
+    'mistralai/mistral-small-3.1-24b-instruct:free', //funciona
+    'deepseek/deepseek-r1:free', //funciona
+    'nousresearch/deephermes-3-mistral-24b-preview:free', //funciona
+    'opengvlab/internvl3-14b:free', //funciona
+    'deepseek/deepseek-prover-v2:free' //funciona
 ];
 
 export {

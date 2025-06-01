@@ -19,6 +19,7 @@ END TRY
 BEGIN CATCH
 SET @NewAuthId = NULL;
         SET @Success = 0;
+        THROW;
 END CATCH
 END;
 GO
@@ -43,6 +44,7 @@ SET @Success = IIF(@@ROWCOUNT > 0, 1, 0);
 END TRY
 BEGIN CATCH
 SET @Success = 0;
+        THROW;
 END CATCH
 END;
 GO
@@ -77,6 +79,7 @@ SET @Success = IIF(@@ROWCOUNT > 0, 1, 0);
 END TRY
 BEGIN CATCH
 SET @Success = 0;
+        THROW;
 END CATCH
 END;
 GO
@@ -98,6 +101,7 @@ SET @Success = IIF(@@ROWCOUNT > 0, 1, 0);
 END TRY
 BEGIN CATCH
 SET @Success = 0;
+        THROW;
 END CATCH
 END;
 GO
