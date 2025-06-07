@@ -1,3 +1,3 @@
 // Importar rutas de APIs para hacer uso de ellas
-import { AUTH_API, AUTH_LOGIN_API, AUTH_CAMBIAR_CLAVE_API, AUTH_REGISTRAR_API, AUTH_VALIDAR_TOKEN_API } from '../config/constants.js';
+import { USERS_API, USERS_GET_BY_ID_API } from '../config/constants.js';
 import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';

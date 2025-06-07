@@ -5,7 +5,7 @@
     <TimeStampOfAssociatedLegacyPublishXmlFile />
     <EncryptedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAJuvdWdHqJUOuHd0bnR5U9gAAAAACAAAAAAAQZgAAAAEAACAAAAAH9M4uli92uqmLIyVBoOKCAxVJnZwESKlBdit7lXltFQAAAAAOgAAAAAIAACAAAADo5TAwsO8t/XOtLAuhwmth2vIGSHq6xxyiboOz/JCMGTAAAADBPc0JLobXu49YY3U2TKSAhEwuDEdzsfKovwo9BhsmuERHvHTBEBQqU6ZClq/NCNpAAAAADZ+8RRP2OFR0XFEe9pU/GO7Pz0wjSsS8yMwNgEvJ46AM8eRFplRCB6DoQzzPVBUpFv0MRtefBc2ND+9k4oa/6A==</EncryptedPassword>
     <_PublishTargetUrl>ftp://155.254.244.28/www.iamlsupportsystem.somee.com</_PublishTargetUrl>
-    <History>True|2025-06-01T22:34:39.7929470Z||;True|2025-06-01T16:18:16.4958190-06:00||;True|2025-06-01T15:03:06.8182241-06:00||;True|2025-06-01T14:56:03.0119116-06:00||;</History>
+    <History>True|2025-06-06T23:35:09.2444012Z||;True|2025-06-01T16:34:39.7929470-06:00||;True|2025-06-01T16:18:16.4958190-06:00||;True|2025-06-01T15:03:06.8182241-06:00||;True|2025-06-01T14:56:03.0119116-06:00||;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -21,7 +21,7 @@
       <publishTime>06/01/2025 12:59:28</publishTime>
     </File>
     <File Include="appsettings.production.json">
-      <publishTime>06/01/2025 16:32:04</publishTime>
+      <publishTime>06/06/2025 17:32:54</publishTime>
     </File>
     <File Include="Azure.Core.dll">
       <publishTime>02/26/2024 09:24:40</publishTime>
@@ -153,16 +153,16 @@
       <publishTime>09/16/2024 17:10:56</publishTime>
     </File>
     <File Include="SistemaTicketsIAApi.deps.json">
-      <publishTime>06/01/2025 16:32:04</publishTime>
+      <publishTime>06/06/2025 17:32:54</publishTime>
     </File>
     <File Include="SistemaTicketsIAApi.dll">
-      <publishTime>06/01/2025 16:32:04</publishTime>
+      <publishTime>06/06/2025 17:32:53</publishTime>
     </File>
     <File Include="SistemaTicketsIAApi.exe">
-      <publishTime>06/01/2025 16:32:04</publishTime>
+      <publishTime>06/06/2025 17:32:53</publishTime>
     </File>
     <File Include="SistemaTicketsIAApi.pdb">
-      <publishTime>06/01/2025 16:32:04</publishTime>
+      <publishTime>06/06/2025 17:32:53</publishTime>
     </File>
     <File Include="SistemaTicketsIAApi.runtimeconfig.json">
       <publishTime>06/01/2025 14:50:43</publishTime>
@@ -207,7 +207,7 @@
       <publishTime>04/25/2025 13:04:20</publishTime>
     </File>
     <File Include="web.config">
-      <publishTime>06/01/2025 16:32:04</publishTime>
+      <publishTime>06/06/2025 17:32:54</publishTime>
     </File>
     <File Include="zh-Hans/Microsoft.Data.SqlClient.resources.dll">
       <publishTime>04/25/2025 13:04:06</publishTime>

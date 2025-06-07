@@ -10,8 +10,8 @@ using BCrypt.Net;
 
 namespace SistemaTicketsIAApi.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("tickets/v1/[controller]")]
     public class AuthController : ControllerBase
     {
         private readonly IConfiguration _config;

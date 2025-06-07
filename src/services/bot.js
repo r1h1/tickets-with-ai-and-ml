@@ -1,3 +1,4 @@
+// Se importan palabras y consultas para que el bot pueda resolver
 import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from "./iaml.js";
 
 // Sidebar

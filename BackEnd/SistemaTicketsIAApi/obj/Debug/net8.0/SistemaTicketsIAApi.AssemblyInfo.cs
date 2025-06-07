@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SistemaTicketsIAApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+28235b1a45ab2f134bc90b37fc610cd527706b7f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8fe8999d90a89b89deb38c7fd0ef8c551fbbc06d")]
 [assembly: System.Reflection.AssemblyProductAttribute("SistemaTicketsIAApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SistemaTicketsIAApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
