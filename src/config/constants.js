@@ -1,5 +1,5 @@
 // Constante para consumo de APIs para support ia ml
-const API_URL_BASE = 'https://iamlsupportsystem.somee.com/';
+const API_URL_BASE = 'https://iamlsupportsystem.somee.com';
 
 // AUTH
 const AUTH_API = `${API_URL_BASE}/tickets/v1/Auth`;

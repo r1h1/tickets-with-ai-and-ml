@@ -12,141 +12,152 @@
     <link rel="stylesheet" href="../../assets/css/common.css">
 </head>
 <body>
-<nav class="navbar px-3 d-flex justify-content-between">
-    <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <a href="../../../index.html" class="btn btn-secondary m-3">
-        <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
-    </a>
-</nav>
-<div class="d-flex">
-    <div class="sidebar" id="sidebar">
-        <div class="text-center">
-            <img src="../../assets/img/logo.png" alt="Logo" class="mb-4 mt-4" width="120px">
-        </div>
-        <div class="px-3">
-            <a href="start.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
-            <a href="bot.html"><i class="bi bi-robot me-2"></i>Base de Conocimiento (Bot)</a>
-            <a href="tickets.html" class="active"><i class="bi bi-ticket-detailed me-2"></i>Tickets</a>
-            <a href="categorias.html"><i class="bi bi-tags me-2"></i>Categorías</a>
-            <a href="usuarios.html"><i class="bi bi-people me-2"></i>Usuarios</a>
-            <a href="roles.html"><i class="bi bi-person-badge me-2"></i>Roles</a>
-        </div>
+
+<!-- Pantalla de carga -->
+<div id="loader" class="loader-container">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
     </div>
-    <div class="container-fluid p-5">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-            <h5 class="mb-1">Pool de Tickets</h5>
-            <button class="btn btn-secondary"><i class="bi bi-plus-circle me-2"></i>Nuevo Ticket</button>
+</div>
+
+<div id="content">
+    <nav class="navbar px-3 d-flex justify-content-between">
+        <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <a href="../../../index.html" class="btn btn-secondary m-3">
+            <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+        </a>
+    </nav>
+    <div class="d-flex">
+        <div class="sidebar" id="sidebar">
+            <div class="text-center">
+                <img src="../../assets/img/logo.png" alt="Logo" class="mb-4 mt-4" width="120px">
+            </div>
+            <div class="px-3">
+                <a href="start.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                <a href="bot.html"><i class="bi bi-robot me-2"></i>Base de Conocimiento (Bot)</a>
+                <a href="tickets.html" class="active"><i class="bi bi-ticket-detailed me-2"></i>Tickets</a>
+                <a href="categorias.html"><i class="bi bi-tags me-2"></i>Categorías</a>
+                <a href="usuarios.html"><i class="bi bi-people me-2"></i>Usuarios</a>
+                <a href="roles.html"><i class="bi bi-person-badge me-2"></i>Roles</a>
+            </div>
         </div>
+        <div class="container-fluid p-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+                <h5 class="mb-1">Pool de Tickets</h5>
+                <button class="btn btn-secondary"><i class="bi bi-plus-circle me-2"></i>Nuevo Ticket</button>
+            </div>
 
-        <p class="text-secondary mb-5">Para abrir un ticket y ver su contenido completo presiona sobre el texto
-            azul en <span class="fw-bold">No. de ticket</span></p>
+            <p class="text-secondary mb-5">Para abrir un ticket y ver su contenido completo presiona sobre el texto
+                azul en <span class="fw-bold">No. de ticket</span></p>
 
-        <!-- Modal Nuevo Ticket -->
-        <div class="modal fade" id="modalNuevoTicket" tabindex="-1" aria-labelledby="nuevoTicketLabel"
-             aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 border-0 shadow-sm">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="nuevoTicketLabel">Nuevo Ticket</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formNuevoTicket">
-                            <div class="mb-3">
-                                <label for="fecha" class="form-label">Fecha</label>
-                                <input type="date" class="form-control rounded-3" id="fecha">
-                            </div>
-                            <div class="mb-3">
-                                <label for="nombre" class="form-label">Nombre</label>
-                                <select class="form-select rounded-3" id="nombre">
-                                    <option selected>Seleccionar usuario</option>
-                                    <option value="Klemen">Klemen</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="asunto" class="form-label">Asunto</label>
-                                <input type="text" class="form-control rounded-3" id="asunto"
-                                       placeholder="Describe el asunto">
-                            </div>
-                            <div class="mb-3">
-                                <label for="asunto" class="form-label">Descripción del problema</label>
-                                <textarea class="form-control" rows="3" id="descripcion"
-                                          placeholder="Describe tu problema técnico" required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="categoria" class="form-label">Categoría</label>
-                                <select class="form-select rounded-3" id="categoria">
-                                    <option selected>Seleccionar categoría</option>
-                                    <option value="Soporte">Soporte</option>
-                                    <option value="Acceso">Acceso</option>
-                                    <option value="Otro">Otro</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-secondary">Guardar Ticket</button>
+            <!-- Modal Nuevo Ticket -->
+            <div class="modal fade" id="modalNuevoTicket" tabindex="-1" aria-labelledby="nuevoTicketLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-4 border-0 shadow-sm">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="nuevoTicketLabel">Nuevo Ticket</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formNuevoTicket">
+                                <div class="mb-3">
+                                    <label for="fecha" class="form-label">Fecha</label>
+                                    <input type="date" class="form-control rounded-3" id="fecha">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <select class="form-select rounded-3" id="nombre">
+                                        <option selected>Seleccionar usuario</option>
+                                        <option value="Klemen">Klemen</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="asunto" class="form-label">Asunto</label>
+                                    <input type="text" class="form-control rounded-3" id="asunto"
+                                           placeholder="Describe el asunto">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="asunto" class="form-label">Descripción del problema</label>
+                                    <textarea class="form-control" rows="3" id="descripcion"
+                                              placeholder="Describe tu problema técnico" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="categoria" class="form-label">Categoría</label>
+                                    <select class="form-select rounded-3" id="categoria">
+                                        <option selected>Seleccionar categoría</option>
+                                        <option value="Soporte">Soporte</option>
+                                        <option value="Acceso">Acceso</option>
+                                        <option value="Otro">Otro</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-secondary">Guardar Ticket</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="table-responsive">
-            <table id="ticketTable" class="table table-hover table-bordered align-middle text-center">
-                <thead class="table-thead-color">
-                <tr>
-                    <th>No. de Ticket</th>
-                    <th>Fecha</th>
-                    <th>Nombre</th>
-                    <th>Asunto</th>
-                    <th>Estado</th>
-                    <th>Última respuesta</th>
-                    <th>Prioridad</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">8VT-PZU-BRG9</a></td>
-                    <td>04 May 21</td>
-                    <td>Klemen</td>
-                    <td>Ticket priority Critical</td>
-                    <td>Nuevo</td>
-                    <td>Klemen</td>
-                    <td><span class="priority-tag priority-critical">Crítica</span></td>
-                </tr>
-                <tr>
-                    <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">PBG-J12-UJ9W</a></td>
-                    <td>04 May 21</td>
-                    <td>Klemen</td>
-                    <td>Ticket priority High</td>
-                    <td>Nuevo</td>
-                    <td>Klemen</td>
-                    <td><span class="priority-tag priority-high">Alta</span></td>
-                </tr>
-                <tr>
-                    <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">GST-MBA-DYA6</a></td>
-                    <td>04 May 21</td>
-                    <td>Klemen</td>
-                    <td>Ticket priority Medium</td>
-                    <td>Nuevo</td>
-                    <td>Klemen</td>
-                    <td><span class="priority-tag priority-medium">Media</span></td>
-                </tr>
-                <tr>
-                    <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">MN9-GNE-WX1D</a></td>
-                    <td>04 May 21</td>
-                    <td>Klemen</td>
-                    <td>Ticket priority Low</td>
-                    <td>Nuevo</td>
-                    <td>Klemen</td>
-                    <td><span class="priority-tag priority-low">Baja</span></td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="ticketTable" class="table table-hover table-bordered align-middle text-center">
+                    <thead class="table-thead-color">
+                    <tr>
+                        <th>No. de Ticket</th>
+                        <th>Fecha</th>
+                        <th>Nombre</th>
+                        <th>Asunto</th>
+                        <th>Estado</th>
+                        <th>Última respuesta</th>
+                        <th>Prioridad</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">8VT-PZU-BRG9</a></td>
+                        <td>04 May 21</td>
+                        <td>Klemen</td>
+                        <td>Ticket priority Critical</td>
+                        <td>Nuevo</td>
+                        <td>Klemen</td>
+                        <td><span class="priority-tag priority-critical">Crítica</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">PBG-J12-UJ9W</a></td>
+                        <td>04 May 21</td>
+                        <td>Klemen</td>
+                        <td>Ticket priority High</td>
+                        <td>Nuevo</td>
+                        <td>Klemen</td>
+                        <td><span class="priority-tag priority-high">Alta</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">GST-MBA-DYA6</a></td>
+                        <td>04 May 21</td>
+                        <td>Klemen</td>
+                        <td>Ticket priority Medium</td>
+                        <td>Nuevo</td>
+                        <td>Klemen</td>
+                        <td><span class="priority-tag priority-medium">Media</span></td>
+                    </tr>
+                    <tr>
+                        <td><a href="detalle_ticket.html?q=8VT-PZU-BRG9">MN9-GNE-WX1D</a></td>
+                        <td>04 May 21</td>
+                        <td>Klemen</td>
+                        <td>Ticket priority Low</td>
+                        <td>Nuevo</td>
+                        <td>Klemen</td>
+                        <td><span class="priority-tag priority-low">Baja</span></td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -176,5 +187,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../../utils/init.js" type="module"></script>
 <script src="../../services/ticket.js" type="module"></script>
+<script src="../../utils/tokenValidation.js" type="module"></script>
+<script src="../../utils/tokenValidation.js" type="module"></script>
 </body>
 </html>

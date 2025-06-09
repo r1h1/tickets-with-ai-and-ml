@@ -5,7 +5,10 @@ import { clasificarTicketIA } from './iaml.js';
 import { TICKETS_API, TICKETS_GET_BY_ID_API } from '../config/constants.js';
 
 // Importar sweetalert2
-import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
+import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js'
+
+// Importar métodos para enviar traer info de apis
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 
 // Crear un contenedor de toast si no existe
 const crearToastContainer = () => {

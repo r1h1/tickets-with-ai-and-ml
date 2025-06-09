@@ -1,5 +1,8 @@
 // Se importan palabras y consultas para que el bot pueda resolver
 import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from "./iaml.js";
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import { mostrarToast } from '../utils/toast.js';
+
 
 // Sidebar
 function toggleSidebar() {
@@ -39,45 +42,6 @@ function mostrarAviso(tipo, mensaje) {
     aviso.innerHTML = `<strong>Bot:</strong><br>${mensaje}`;
     document.getElementById('responseArea').prepend(aviso);
 }
-
-// Toast container y notificaciones visuales
-const crearToastContainer = () => {
-    if (!document.getElementById('toast-container')) {
-        const toastContainer = document.createElement('div');
-        toastContainer.id = 'toast-container';
-        toastContainer.className = 'position-fixed top-0 start-50 translate-middle-x p-3';
-        toastContainer.style.zIndex = '1100';
-        document.body.appendChild(toastContainer);
-    }
-};
-
-const mostrarToast = (mensaje, tipo = 'danger') => {
-    crearToastContainer();
-    const toastWrapper = document.createElement('div');
-    toastWrapper.className = 'toast align-items-center text-white border-0 show';
-
-    const colorMap = {
-        success: 'bg-success',
-        warning: 'bg-warning text-dark',
-        danger: 'bg-danger',
-        info: 'bg-info text-dark'
-    };
-
-    toastWrapper.classList.add(colorMap[tipo] || 'bg-secondary');
-
-    toastWrapper.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${mensaje}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-
-    document.getElementById('toast-container').appendChild(toastWrapper);
-
-    setTimeout(() => {
-        toastWrapper.remove();
-    }, 8000);
-};
 
 // Inicialización
 document.addEventListener('DOMContentLoaded', () => {
@@ -160,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 mostrarToast('El ticket fue creado, pero debe ser clasificado manualmente.', 'warning');
             } else {
                 mostrarToast(`Ticket creado correctamente, se clasificó como ${resultado.prioridad} 
-                y se otorgó una lista de pasos para el equipo de soporte.`, 'success');
+                y se otorgó una lista de pasos para el equipo de soporte, se te atenderá según la prioridad.`, 'success');
             }
 
             const modalElement = document.getElementById('modalNuevoTicket');

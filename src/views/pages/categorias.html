@@ -12,6 +12,14 @@
     <link rel="stylesheet" href="../../assets/css/common.css">
 </head>
 <body>
+
+<!-- Pantalla de carga -->
+<div id="loader" class="loader-container">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
+    </div>
+</div>
+
 <nav class="navbar px-3 d-flex justify-content-between">
     <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
         <span class="navbar-toggler-icon"></span>
@@ -133,5 +141,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="../../utils/init.js" type="module"></script>
+<script src="../../utils/tokenValidation.js" type="module"></script>
 </body>
 </html>

@@ -4,6 +4,7 @@ import {
     IA_MODELS
 } from "../config/constants.js";
 import {IA_PROMPT_BASE} from "../config/prompts.js";
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 
 // Round robin para keys
 let currentKeyIndex = parseInt(sessionStorage.getItem('apiKeyIndex')) || 0;

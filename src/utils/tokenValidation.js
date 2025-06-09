@@ -11,7 +11,7 @@ const verificarToken = async (token) => {
     }
 
     try {
-        const data = await fetchDataToken(API_AUTH_VALIDARTOKEN, "GET", {
+        const data = await fetchDataToken(AUTH_VALIDAR_TOKEN_API, "GET", {
             "Authorization": `Bearer ${token}`,
             "Accept": "application/json" // Asegurar que la API lo acepte
         });
