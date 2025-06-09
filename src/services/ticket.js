@@ -1,79 +1,71 @@
-// Este script debe agregarse al archivo ticket.js o equivalente
+// ===================== IMPORTACIONES =====================
 import { clasificarTicketIA } from './iaml.js';
-
-// Importar rutas de APIs para hacer uso de ellas
 import { TICKETS_API, TICKETS_GET_BY_ID_API } from '../config/constants.js';
-
-// Importar sweetalert2
-import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js'
-
-// Importar métodos para enviar traer info de apis
+import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import { verificarToken } from '../utils/tokenValidation.js';
+import { mostrarToast } from '../utils/toast.js';
 
-// Crear un contenedor de toast si no existe
-const crearToastContainer = () => {
-    if (!document.getElementById('toast-container')) {
-        const toastContainer = document.createElement('div');
-        toastContainer.id = 'toast-container';
-        toastContainer.className = 'position-fixed top-0 start-50 translate-middle-x p-3';
-        toastContainer.style.zIndex = '1100';
-        document.body.appendChild(toastContainer);
+
+// ===================== FUNCIONES DE SESIÓN =====================
+const closeSession = () => {
+    try {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("apiKeyIndex");
+        sessionStorage.removeItem("contadorMensajes");
+        sessionStorage.removeItem("modelIndex");
+        sessionStorage.removeItem("ticketClasificado");
+        window.location.href = "../../../index.html";
+    } catch (error) {
+        showError("Error al cerrar sesión:", error);
     }
-};
-
-const mostrarToast = (mensaje, tipo = 'danger') => {
-    crearToastContainer();
-    const toastWrapper = document.createElement('div');
-    toastWrapper.className = 'toast align-items-center text-white border-0 show';
-
-    const colorMap = {
-        success: 'bg-success',
-        warning: 'bg-warning text-dark',
-        danger: 'bg-danger',
-        info: 'bg-info text-dark'
-    };
-
-    toastWrapper.classList.add(colorMap[tipo] || 'bg-secondary');
-
-    toastWrapper.innerHTML = `
-        <div class="d-flex">
-            <div class="toast-body">${mensaje}</div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
-        </div>
-    `;
-
-    document.getElementById('toast-container').appendChild(toastWrapper);
-
-    setTimeout(() => {
-        toastWrapper.remove();
-    }, 8000);
-};
-
-// Asignar fecha por defecto
-const fechaInput = document.getElementById('fecha');
-if (fechaInput) {
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    fechaInput.value = `${year}-${month}-${day}`;
 }
 
-// Mostrar modal al presionar "Nuevo Ticket"
-document.querySelector('button.btn.btn-secondary')?.addEventListener('click', () => {
-    const modalNuevoTicket = document.getElementById('modalNuevoTicket');
-    if (modalNuevoTicket) {
-        const modal = new bootstrap.Modal(modalNuevoTicket);
-        modal.show();
+const checkTokenAndLoginInfo = async () => {
+    const token = sessionStorage.getItem("token");
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginExitoso = urlParams.get("login") === "true";
+
+    const esValido = await verificarToken(token);
+
+    if (esValido) {
+        if (loginExitoso) {
+            mostrarToast("Sesión iniciada con éxito, bienvenido.", "success");
+        }
+    } else {
+        mostrarToast("Sesión inválida.", "danger");
+        sessionStorage.removeItem("token");
+        location.href = "../../../index.html";
     }
-});
+};
 
-// Guardar ticket y mostrar resultado IA
-const formNuevoTicket = document.getElementById('formNuevoTicket');
-const guardarBtn = document.querySelector('#modalNuevoTicket .btn.btn-secondary:last-child');
 
-if (guardarBtn) {
-    guardarBtn.addEventListener('click', async () => {
+// ===================== UI INIT (FECHA, MODAL) =====================
+const initUI = () => {
+    const fechaInput = document.getElementById('fecha');
+    if (fechaInput) {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const day = String(today.getDate()).padStart(2, '0');
+        fechaInput.value = `${year}-${month}-${day}`;
+    }
+
+    document.getElementById('btnNuevoTicket')?.addEventListener('click', () => {
+        const modalNuevoTicket = document.getElementById('modalNuevoTicket');
+        if (modalNuevoTicket) {
+            const modal = new bootstrap.Modal(modalNuevoTicket);
+            modal.show();
+        }
+    });
+};
+
+
+// ===================== GUARDAR TICKET =====================
+const initGuardarTicket = () => {
+    const btnGuardar = document.getElementById('btnGuardarTicket');
+
+    btnGuardar?.addEventListener('click', async () => {
         const asunto = document.getElementById('asunto').value.trim();
         const descripcion = document.getElementById('descripcion').value.trim();
         const fecha = document.getElementById('fecha').value;
@@ -84,8 +76,12 @@ if (guardarBtn) {
             return;
         }
 
+        btnGuardar.disabled = true;
+        const toastId = mostrarToast("Analizando ticket y cargando resultados, espere un momento...", "secondary", true);
+
         try {
             const resultado = await clasificarTicketIA(asunto, descripcion);
+            if (toastId) toastId.remove();
 
             if (
                 resultado.razonamiento === 'El bot no respondió. Se creó el ticket con prioridad media.' ||
@@ -93,17 +89,30 @@ if (guardarBtn) {
             ) {
                 mostrarToast('El ticket fue creado, pero debe ser clasificado manualmente.', 'warning');
             } else {
-                mostrarToast(`Ticket creado correctamente, se clasificó como ${resultado.prioridad} y se
-                otorgó una lista de pasos para el equipo de soporte.`, 'success');
+                mostrarToast(`Ticket creado correctamente, se clasificó como ${resultado.prioridad} y se otorgó una lista de pasos para el equipo de soporte.`, 'success');
             }
 
-            // Cerrar modal
             const modalElement = document.getElementById('modalNuevoTicket');
             const modalInstance = bootstrap.Modal.getInstance(modalElement);
             modalInstance?.hide();
 
+            // (Opcional) Limpiar campos
+            document.getElementById('formNuevoTicket').reset();
+
         } catch (error) {
+            if (toastId) toastId.remove();
             mostrarToast('Error inesperado al procesar el ticket.', 'danger');
+        } finally {
+            btnGuardar.disabled = false;
         }
     });
-}
+};
+
+
+// ===================== INICIALIZACIÓN =====================
+document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById("btnCloseSession")?.addEventListener("click", closeSession);
+    await checkTokenAndLoginInfo();
+    initUI();
+    initGuardarTicket();
+});

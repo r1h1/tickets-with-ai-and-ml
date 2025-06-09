@@ -7,6 +7,10 @@ import {mostrarToast} from '../utils/toast.js';
 const closeSession = () => {
     try {
         sessionStorage.removeItem("token");
+        sessionStorage.removeItem("apiKeyIndex");
+        sessionStorage.removeItem("contadorMensajes");
+        sessionStorage.removeItem("modelIndex");
+        sessionStorage.removeItem("ticketClasificado");
         window.location.href = "../../../index.html";
     } catch (error) {
         showError("Error al cerrar sesión:", error);

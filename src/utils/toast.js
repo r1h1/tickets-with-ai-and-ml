@@ -1,4 +1,5 @@
 // Toast container y notificaciones visuales
+
 const crearToastContainer = () => {
     if (!document.getElementById('toast-container')) {
         const toastContainer = document.createElement('div');
@@ -9,8 +10,9 @@ const crearToastContainer = () => {
     }
 };
 
-const mostrarToast = (mensaje, tipo = 'danger') => {
+const mostrarToast = (mensaje, tipo = 'danger', persistente = false) => {
     crearToastContainer();
+
     const toastWrapper = document.createElement('div');
     toastWrapper.className = 'toast align-items-center text-white border-0 show';
 
@@ -21,7 +23,9 @@ const mostrarToast = (mensaje, tipo = 'danger') => {
         info: 'bg-info text-dark'
     };
 
-    toastWrapper.classList.add(colorMap[tipo] || 'bg-secondary');
+    (colorMap[tipo] || 'bg-secondary')
+        .split(' ')
+        .forEach(c => toastWrapper.classList.add(c));
 
     toastWrapper.innerHTML = `
         <div class="d-flex">
@@ -32,9 +36,11 @@ const mostrarToast = (mensaje, tipo = 'danger') => {
 
     document.getElementById('toast-container').appendChild(toastWrapper);
 
-    setTimeout(() => {
-        toastWrapper.remove();
-    }, 5000);
+    if (!persistente) {
+        setTimeout(() => toastWrapper.remove(), 8000);
+    }
+
+    return toastWrapper;
 };
 
 

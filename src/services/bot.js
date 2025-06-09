@@ -2,7 +2,39 @@
 import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from "./iaml.js";
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 import { mostrarToast } from '../utils/toast.js';
+import {showError} from "../utils/sweetAlert.js";
+import {verificarToken} from "../utils/tokenValidation.js";
 
+const closeSession = () => {
+    try {
+        sessionStorage.removeItem("token");
+        sessionStorage.removeItem("apiKeyIndex");
+        sessionStorage.removeItem("contadorMensajes");
+        sessionStorage.removeItem("modelIndex");
+        sessionStorage.removeItem("ticketClasificado");
+        window.location.href = "../../../index.html";
+    } catch (error) {
+        showError("Error al cerrar sesión:", error);
+    }
+}
+
+const checkTokenAndLoginInfo = async () => {
+    const token = sessionStorage.getItem("token");
+    const urlParams = new URLSearchParams(window.location.search);
+    const loginExitoso = urlParams.get("login") === "true";
+
+    const esValido = await verificarToken(token);
+
+    if (esValido) {
+        if (loginExitoso) {
+            mostrarToast("Sesión iniciada con éxito, bienvenido.", "success");
+        }
+    } else {
+        mostrarToast("Sesión inválida.", "danger");
+        sessionStorage.removeItem("token");
+        location.href = "../../../index.html";
+    }
+};
 
 // Sidebar
 function toggleSidebar() {
@@ -44,8 +76,19 @@ function mostrarAviso(tipo, mensaje) {
 }
 
 // Inicialización
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     sessionStorage.setItem('contadorMensajes', sessionStorage.getItem('contadorMensajes') || '0');
+
+    // Variables
+    const btnCerrarSesion = document.getElementById("btnCloseSession");
+
+    // Onclicks a ejecutarse
+    if (btnCerrarSesion) {
+        btnCerrarSesion.addEventListener("click", closeSession);
+    }
+
+    // Funciones a ejecutarse
+    await checkTokenAndLoginInfo();
 
     document.getElementById('formBot')?.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -92,7 +135,7 @@ document.addEventListener('DOMContentLoaded', () => {
         fechaInput.value = `${year}-${month}-${day}`;
     }
 
-    const btnNuevoTicket = document.querySelector('button.btn.btn-secondary');
+    const btnNuevoTicket = document.getElementById('btnNuevoTicket');
     const modalNuevoTicket = document.getElementById('modalNuevoTicket');
     if (btnNuevoTicket && modalNuevoTicket) {
         btnNuevoTicket.addEventListener('click', () => {
@@ -102,6 +145,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const btnGuardar = document.querySelector('#modalNuevoTicket .modal-footer .btn.btn-secondary:last-child');
+
     btnGuardar?.addEventListener('click', async () => {
         const asunto = document.getElementById('asunto').value.trim();
         const descripcion = document.getElementById('descripcion').value.trim();
@@ -113,8 +157,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        btnGuardar.disabled = true;
+        const toastCargando = mostrarToast("Analizando ticket y cargando resultados, espere un momento...", "secondary", true);
+
         try {
             const resultado = await clasificarTicketIA(asunto, descripcion);
+            toastCargando?.remove();
+
             sessionStorage.setItem('ticketClasificado', JSON.stringify(resultado));
 
             if (
@@ -124,15 +173,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 mostrarToast('El ticket fue creado, pero debe ser clasificado manualmente.', 'warning');
             } else {
                 mostrarToast(`Ticket creado correctamente, se clasificó como ${resultado.prioridad} 
-                y se otorgó una lista de pasos para el equipo de soporte, se te atenderá según la prioridad.`, 'success');
+            y se otorgó una lista de pasos para el equipo de soporte, se te atenderá según la prioridad.`, 'success');
             }
 
             const modalElement = document.getElementById('modalNuevoTicket');
             const modalInstance = bootstrap.Modal.getInstance(modalElement);
             modalInstance?.hide();
 
+            document.getElementById('formNuevoTicket')?.reset(); // limpia el form
+
         } catch (error) {
+            toastCargando?.remove();
             mostrarToast('Error inesperado al procesar el ticket.', 'danger');
+        } finally {
+            btnGuardar.disabled = false;
         }
     });
 });

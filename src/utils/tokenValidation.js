@@ -1,34 +1,45 @@
 // Importar API para auth token
 import { AUTH_VALIDAR_TOKEN_API } from '../config/constants.js';
-
-// Importar fetchDataToken para enviar datos y recibir del token
 import { fetchDataToken } from '../data/apiMethods.js';
 
 const verificarToken = async (token) => {
     if (!token) {
         console.warn("Token no encontrado.");
+        await delayLoader(false);
         return false;
     }
 
     try {
         const data = await fetchDataToken(AUTH_VALIDAR_TOKEN_API, "GET", {
             "Authorization": `Bearer ${token}`,
-            "Accept": "application/json" // Asegurar que la API lo acepte
+            "Accept": "application/json"
         });
 
-        if (data.code === 200 && data.message === "Token válido.") {
-            document.getElementById("loader").style.display = "none";
-            document.getElementById("content").style.display = "block";
-            return true;
-        } else {
-            document.getElementById("loader").style.display = "block";
-            document.getElementById("content").style.display = "none";
-            return false;
-        }
+        const valido = data.code === 200 && data.message === "Token válido.";
+        await delayLoader(valido);
+        return valido;
+
     } catch (error) {
         console.error("Error en la validación del token:", error);
+        await delayLoader(false);
         return false;
     }
 };
 
-export {verificarToken};
+// Función para manejar el loader con x segundos
+const delayLoader = (tokenValido) => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            if (tokenValido) {
+                document.getElementById("loader").style.display = "none";
+                document.getElementById("content").style.display = "block";
+            } else {
+                document.getElementById("loader").style.display = "block";
+                document.getElementById("content").style.display = "none";
+            }
+            resolve();
+        }, 50); // mili segundos
+    });
+};
+
+export { verificarToken };
