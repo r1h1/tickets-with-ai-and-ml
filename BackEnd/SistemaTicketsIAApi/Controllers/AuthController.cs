@@ -26,10 +26,10 @@ namespace SistemaTicketsIAApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] AuthLoginRequest request)
         {
-            if (string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Password))
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
                 return BadRequest(new { code = 400, message = "Nombre y contraseña son requeridos." });
 
-            var user = await _authData.GetByUserId(request.UserId, request.Name);
+            var user = await _authData.GetByUserId(request.UserId, request.Email);
             if (user == null)
                 return Unauthorized(new { code = 401, message = "Credenciales inválidas." });
 
@@ -69,7 +69,7 @@ namespace SistemaTicketsIAApi.Controllers
                 code = 200,
                 token = tokenString,
                 message = "Login exitoso",
-                user = new { user.UserId, user.AuthId, user.Name }
+                user = new { user.UserId, user.AuthId, user.Email }
             });
         }
 
@@ -80,7 +80,7 @@ namespace SistemaTicketsIAApi.Controllers
             if (string.IsNullOrEmpty(request.Password))
                 return BadRequest(new { code = 400, message = "Contraseña requerida." });
 
-            if (string.IsNullOrEmpty(request.Name))
+            if (string.IsNullOrEmpty(request.Email))
                 return BadRequest(new { code = 400, message = "Nombre de usuario requerido." });
 
             string salt = Guid.NewGuid().ToString();
@@ -89,7 +89,7 @@ namespace SistemaTicketsIAApi.Controllers
             var newUser = new Auth
             {
                 UserId = request.UserId,
-                Name = request.Name,
+                Email = request.Email,
                 PasswordHash = hashed,
                 Salt = salt
             };
@@ -108,13 +108,13 @@ namespace SistemaTicketsIAApi.Controllers
             if (string.IsNullOrEmpty(request.NewPassword))
                 return BadRequest(new { code = 400, message = "La nueva contraseña no puede estar vacía." });
 
-            if (string.IsNullOrEmpty(request.Name))
+            if (string.IsNullOrEmpty(request.Email))
                 return BadRequest(new { code = 400, message = "Nombre de usuario requerido para actualizar contraseña." });
 
             string newSalt = Guid.NewGuid().ToString();
             string newHashed = BCrypt.Net.BCrypt.HashPassword(request.NewPassword + newSalt);
 
-            // Aquí podría validarse que exista ese UserId + Name antes de actualizar
+            // Aquí podría validarse que exista ese UserId + Email antes de actualizar
 
             bool updated = await _authData.UpdatePassword(request.UserId, newHashed, newSalt);
 

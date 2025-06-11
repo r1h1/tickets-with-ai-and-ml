@@ -13,8 +13,8 @@ namespace SistemaTicketsIAApi.Data
             _connectionString = configuration.GetConnectionString("CadenaSQL")!;
         }
 
-        // Login validando UserId + Name
-        public async Task<Auth?> GetByUserId(int userId, string name)
+        // Login validando UserId + Email
+        public async Task<Auth?> GetByUserId(int userId, string Email)
         {
             Auth? auth = null;
 
@@ -25,7 +25,7 @@ namespace SistemaTicketsIAApi.Data
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@UserId", userId);
-                    cmd.Parameters.AddWithValue("@Name", name);
+                    cmd.Parameters.AddWithValue("@Email", Email);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -42,7 +42,7 @@ namespace SistemaTicketsIAApi.Data
                                     : null,
                                 State = Convert.ToInt32(reader["State"]),
                                 RoleId = Convert.ToInt32(reader["RoleId"]),
-                                Name = reader["Name"].ToString()!
+                                Email = reader["Email"].ToString()!
                             };
                         }
                     }

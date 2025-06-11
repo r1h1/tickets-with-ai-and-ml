@@ -16,21 +16,21 @@ const sanitizeInput = (input) => {
 const login = async () => {
 
     let userId = document.getElementById("userId").value.trim();
-    let username = document.getElementById("username").value.trim();
+    let Email = document.getElementById("username").value.trim();
     let password = document.getElementById("password").value.trim();
 
-    if (!username || !password || !userId) {
+    if (!Email || !password || !userId) {
         showError('Llena todos los campos para continuar.');
         return;
     }
 
     // Sanitizar entradas para evitar XSS
     userId = sanitizeInput(userId);
-    username = sanitizeInput(username);
+    Email = sanitizeInput(Email);
     password = sanitizeInput(password);
 
     try {
-        const data = { userId: parseInt(userId), username, password };
+        const data = { userId: parseInt(userId), Email, password };
         const response = await sendData(AUTH_LOGIN_API, "POST", data);
         console.log(response);
 

@@ -49,7 +49,7 @@ GO
 
 CREATE PROCEDURE sp_authSelectByUserId
     @UserId INT,
-    @Name NVARCHAR(100)
+    @Email NVARCHAR(100)
     AS
 BEGIN
     SET NOCOUNT ON;
@@ -62,11 +62,11 @@ SELECT
     a.LastLogin,
     a.State,
     u.RoleId,
-    u.Name
+    u.Email
 FROM Auth a
          INNER JOIN Users u ON a.UserId = u.UserId
 WHERE u.UserId = @UserId
-  AND u.Name = @Name
+  AND u.Email = @Email
   AND a.State = 1
   AND u.State = 1;
 END;
