@@ -20,94 +20,84 @@
     </div>
 </div>
 
-<nav class="navbar px-3 d-flex justify-content-between">
-    <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <button class="btn btn-secondary m-3" id="btnCloseSession"><i class="bi bi-box-arrow-right me-2"></i>Cerrar
-        Sesión
-    </button>
-</nav>
-<div class="d-flex">
-    <div class="sidebar" id="sidebar">
-        <div class="text-center">
-            <img src="../../assets/img/logo.png" alt="Logo" class="mb-4 mt-4" width="120px">
+<div id="content">
+    <nav class="navbar px-3 d-flex justify-content-between">
+        <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <button class="btn btn-secondary m-3" id="btnCloseSession"><i class="bi bi-box-arrow-right me-2"></i>Cerrar
+            Sesión
+        </button>
+    </nav>
+    <div class="d-flex">
+        <div class="sidebar" id="sidebar">
+            <div class="text-center">
+                <img src="../../assets/img/logo.png" alt="Logo" class="mb-4 mt-4" width="120px">
+            </div>
+            <div class="px-3">
+                <a href="start.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                <a href="bot.html"><i class="bi bi-robot me-2"></i>Base de Conocimiento (Bot)</a>
+                <a href="tickets.html"><i class="bi bi-ticket-detailed me-2"></i>Tickets</a>
+                <a href="categorias.html" class="active"><i class="bi bi-tags me-2"></i>Categorías</a>
+                <a href="usuarios.html"><i class="bi bi-people me-2"></i>Usuarios</a>
+                <a href="roles.html"><i class="bi bi-person-badge me-2"></i>Roles</a>
+            </div>
         </div>
-        <div class="px-3">
-            <a href="start.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
-            <a href="bot.html"><i class="bi bi-robot me-2"></i>Base de Conocimiento (Bot)</a>
-            <a href="tickets.html"><i class="bi bi-ticket-detailed me-2"></i>Tickets</a>
-            <a href="categorias.html" class="active"><i class="bi bi-tags me-2"></i>Categorías</a>
-            <a href="usuarios.html"><i class="bi bi-people me-2"></i>Usuarios</a>
-            <a href="roles.html"><i class="bi bi-person-badge me-2"></i>Roles</a>
-        </div>
-    </div>
-    <div class="container-fluid p-5">
-        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-            <h5 class="mb-0">Categorías de Tickets</h5>
-            <button class="btn btn-secondary" onclick="mostrarModalCategoria()"><i class="bi bi-plus-circle me-2"></i>Agregar Categoría</button>
-        </div>
+        <div class="container-fluid p-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+                <h5 class="mb-0">Categorías de Tickets</h5>
+                <button class="btn btn-secondary" onclick="mostrarModalCategoria()"><i
+                        class="bi bi-plus-circle me-2"></i>Agregar Categoría
+                </button>
+            </div>
 
-        <!-- Modal Agregar Categoría -->
-        <div class="modal fade" id="modalAgregarCategoria" tabindex="-1" aria-labelledby="agregarCategoriaLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 border-0 shadow-sm">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="agregarCategoriaLabel">Nueva Categoría</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="formNuevaCategoria">
-                            <div class="mb-3">
-                                <label for="nombreCategoria" class="form-label">Nombre de la Categoría</label>
-                                <input type="text" class="form-control rounded-3" id="nombreCategoria" placeholder="Ej. Soporte Técnico">
-                            </div>
-                            <div class="mb-3">
-                                <label for="descripcionCategoria" class="form-label">Descripción</label>
-                                <textarea class="form-control rounded-3" id="descripcionCategoria" rows="3" placeholder="Describe el tipo de tickets que incluirá esta categoría"></textarea>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-secondary">Guardar Categoría</button>
+            <!-- Modal Agregar Categoría -->
+            <div class="modal fade" id="modalAgregarCategoria" tabindex="-1" aria-labelledby="agregarCategoriaLabel"
+                 aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content rounded-4 border-0 shadow-sm">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="agregarCategoriaLabel">Nueva Categoría</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Cerrar"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form id="formNuevaCategoria">
+                                <div class="mb-3">
+                                    <label for="nombreCategoria" class="form-label">Nombre de la Categoría</label>
+                                    <input type="text" class="form-control rounded-3" id="nombreCategoria"
+                                           placeholder="Ej. Soporte Técnico">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="descripcionCategoria" class="form-label">Descripción</label>
+                                    <textarea class="form-control rounded-3" id="descripcionCategoria" rows="3"
+                                              placeholder="Describe el tipo de tickets que incluirá esta categoría"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" class="btn btn-secondary">Guardar Categoría</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <!-- Fin Modal -->
+            <!-- Fin Modal -->
 
-        <div class="table-responsive">
-            <table id="categoriasTable" class="table table-hover table-bordered align-middle text-center">
-                <thead class="table-thead-color">
-                <tr>
-                    <th>ID</th>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody id="categoriasBody">
-                <tr>
-                    <td>1</td>
-                    <td>Soporte Técnico</td>
-                    <td>Problemas relacionados con hardware y software</td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary">Editar</button>
-                        <button class="btn btn-sm btn-secondary">Eliminar</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>Infraestructura</td>
-                    <td>Solicitudes relacionadas con redes, servidores, etc.</td>
-                    <td>
-                        <button class="btn btn-sm btn-secondary">Editar</button>
-                        <button class="btn btn-sm btn-secondary">Eliminar</button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table id="categoriesTable" class="table table-hover table-bordered align-middle text-center">
+                    <thead class="table-thead-color">
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>

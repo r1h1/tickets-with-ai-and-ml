@@ -5,7 +5,8 @@ import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
 import {verificarToken} from "../utils/tokenValidation.js";
 import {mostrarToast} from "../utils/toast.js";
 
-const removeAllSessionStorage = async () => {
+
+const removeAllSessionStorage = () => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("apiKeyIndex");
     sessionStorage.removeItem("contadorMensajes");
@@ -13,6 +14,7 @@ const removeAllSessionStorage = async () => {
     sessionStorage.removeItem("ticketClasificado");
     window.location.href = "../../../index.html";
 }
+
 
 const closeSession = () => {
     try {
@@ -22,14 +24,15 @@ const closeSession = () => {
     }
 }
 
+
 const checkTokenAndLoginInfo = async () => {
     const token = sessionStorage.getItem("token");
     const urlParams = new URLSearchParams(window.location.search);
     const loginExitoso = urlParams.get("login") === "true";
 
-    const esValido = await verificarToken(token);
+    const isValid = await verificarToken(token);
 
-    if (esValido) {
+    if (isValid) {
         if (loginExitoso) {
             mostrarToast("Sesión iniciada con éxito, bienvenido.", "success");
         }
@@ -38,6 +41,72 @@ const checkTokenAndLoginInfo = async () => {
         removeAllSessionStorage();
     }
 };
+
+
+const obtainHeaders = () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+        closeSession();
+        return null;
+    }
+    //retorna el token
+    return {"Authorization": `Bearer ${token}`};
+};
+
+
+const obtainCategories = async () => {
+    try {
+        const response = await fetchData(CATEGORY_API, "GET", obtainHeaders());
+
+        if (response) {
+            // Inicializar DataTable con los nombres correctos de las columnas
+            $('#categoriesTable').DataTable({
+                destroy: true,
+                data: response.data,
+                columns: [
+                    {data: "categoryId"},
+                    {data: "name"},
+                    {data: "description"},
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            return `
+                    <button onclick="editCategories(${JSON.stringify(row).replace(/'/g, "&#39;").replace(/"/g, "&quot;")})" class="btn btn-warning">Editar</button>
+                    <button onclick="deleteCategories(${row.categoryId})" class="btn btn-danger">Eliminar</button>
+                `;
+                        }
+                    }
+                ],
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'copy',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'excel',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'pdf',
+                        className: 'btn btn-secondary'
+                    },
+                    {
+                        extend: 'print',
+                        className: 'btn btn-secondary'
+                    }
+                ],
+                language: {
+                    url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+                }
+            });
+        } else {
+            mostrarToast("No se trajeron datos.", "warning");
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
+}
 
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -51,4 +120,5 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Funciones a ejecutarse
     await checkTokenAndLoginInfo();
+    await obtainCategories();
 });
