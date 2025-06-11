@@ -13,7 +13,8 @@ namespace SistemaTicketsIAApi.Data
             _connectionString = configuration.GetConnectionString("CadenaSQL")!;
         }
 
-        public async Task<Auth?> GetByUserId(int userId)
+        // Login validando UserId + Name
+        public async Task<Auth?> GetByUserId(int userId, string name)
         {
             Auth? auth = null;
 
@@ -24,6 +25,7 @@ namespace SistemaTicketsIAApi.Data
                 {
                     cmd.CommandType = CommandType.StoredProcedure;
                     cmd.Parameters.AddWithValue("@UserId", userId);
+                    cmd.Parameters.AddWithValue("@Name", name);
 
                     using (var reader = await cmd.ExecuteReaderAsync())
                     {
@@ -36,12 +38,12 @@ namespace SistemaTicketsIAApi.Data
                                 PasswordHash = reader["PasswordHash"].ToString()!,
                                 Salt = reader["Salt"].ToString()!,
                                 LastLogin = reader["LastLogin"] != DBNull.Value
-                                ? Convert.ToDateTime(reader["LastLogin"])
-                                : null,
+                                    ? Convert.ToDateTime(reader["LastLogin"])
+                                    : null,
                                 State = Convert.ToInt32(reader["State"]),
-                                RoleId = Convert.ToInt32(reader["RoleId"])
+                                RoleId = Convert.ToInt32(reader["RoleId"]),
+                                Name = reader["Name"].ToString()!
                             };
-
                         }
                     }
                 }
@@ -50,6 +52,7 @@ namespace SistemaTicketsIAApi.Data
             return auth;
         }
 
+        // Registro de usuario
         public async Task<int> Insert(Auth model)
         {
             int newId = 0;
@@ -79,6 +82,7 @@ namespace SistemaTicketsIAApi.Data
             return newId;
         }
 
+        // Cambio de contraseña
         public async Task<bool> UpdatePassword(int userId, string newHash, string salt)
         {
             bool isSuccess = false;
@@ -104,6 +108,7 @@ namespace SistemaTicketsIAApi.Data
             return isSuccess;
         }
 
+        // Actualiza última fecha de login
         public async Task<bool> UpdateLastLogin(int userId)
         {
             bool isSuccess = false;
@@ -127,6 +132,7 @@ namespace SistemaTicketsIAApi.Data
             return isSuccess;
         }
 
+        // Eliminación lógica del auth
         public async Task<bool> LogicalDelete(int userId)
         {
             bool isSuccess = false;

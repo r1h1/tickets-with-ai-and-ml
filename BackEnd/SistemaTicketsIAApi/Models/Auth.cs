@@ -9,6 +9,9 @@ namespace SistemaTicketsIAApi.Models
         [Required(ErrorMessage = "Id de usuario obligatorio.")]
         public int UserId { get; set; }
 
+        [Required(ErrorMessage = "Nombre de usuario requerido.")] // ← AGREGADO
+        public string Name { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Hash de contraseña obligatorio.")]
         public string PasswordHash { get; set; }
 
@@ -31,8 +34,8 @@ namespace SistemaTicketsIAApi.Models
         [Required(ErrorMessage = "Id de usuario requerido.")]
         public int UserId { get; set; }
 
-        [Required(ErrorMessage = "Nombre de usuario requerido.")]
-        public string Username { get; set; } = string.Empty;
+        [Required(ErrorMessage = "Nombre de usuario requerido.")] // ← AGREGADO
+        public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Contraseña requerida.")]
         public string Password { get; set; } = string.Empty;
@@ -43,6 +46,9 @@ namespace SistemaTicketsIAApi.Models
         [Required(ErrorMessage = "Id de usuario requerido.")]
         public int UserId { get; set; }
 
+        [Required(ErrorMessage = "Nombre de usuario requerido.")] // ← AGREGADO
+        public string Name { get; set; } = string.Empty;
+
         [Required(ErrorMessage = "Contraseña requerida.")]
         public string Password { get; set; } = string.Empty;
     }
@@ -51,6 +57,9 @@ namespace SistemaTicketsIAApi.Models
     {
         [Required(ErrorMessage = "Id de usuario requerido.")]
         public int UserId { get; set; }
+
+        [Required(ErrorMessage = "Nombre de usuario requerido.")] // ← AGREGADO
+        public string Name { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Nueva contraseña requerida.")]
         public string NewPassword { get; set; } = string.Empty;

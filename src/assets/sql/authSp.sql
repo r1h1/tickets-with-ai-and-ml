@@ -1,11 +1,10 @@
--- INSERT
 CREATE PROCEDURE sp_authInsert
     @UserId INT,
     @PasswordHash NVARCHAR(255),
     @Salt NVARCHAR(100),
     @NewAuthId INT OUTPUT,
     @Success BIT OUTPUT
-AS
+    AS
 BEGIN
     SET NOCOUNT ON;
 
@@ -24,13 +23,12 @@ END CATCH
 END;
 GO
 
--- UPDATE PASSWORD
 CREATE PROCEDURE sp_authUpdatePassword
     @UserId INT,
     @PasswordHash NVARCHAR(255),
     @Salt NVARCHAR(100),
     @Success BIT OUTPUT
-AS
+    AS
 BEGIN
     SET NOCOUNT ON;
 
@@ -49,9 +47,9 @@ END CATCH
 END;
 GO
 
--- SELECT TO LOGIN
-CREATEgit PROCEDURE sp_authSelectByUserId
-    @UserId INT
+CREATE PROCEDURE sp_authSelectByUserId
+    @UserId INT,
+    @Name NVARCHAR(100)
     AS
 BEGIN
     SET NOCOUNT ON;
@@ -63,18 +61,21 @@ SELECT
     a.Salt,
     a.LastLogin,
     a.State,
-    u.RoleId
+    u.RoleId,
+    u.Name
 FROM Auth a
          INNER JOIN Users u ON a.UserId = u.UserId
-WHERE a.UserId = @UserId AND a.State = 1 AND u.State = 1;
+WHERE u.UserId = @UserId
+  AND u.Name = @Name
+  AND a.State = 1
+  AND u.State = 1;
 END;
 GO
 
--- UPDATE LAST LOGIN DATE
 CREATE PROCEDURE sp_authUpdateLastLogin
     @UserId INT,
     @Success BIT OUTPUT
-AS
+    AS
 BEGIN
     SET NOCOUNT ON;
 
@@ -92,11 +93,10 @@ END CATCH
 END;
 GO
 
--- LOGICAL DELETE
 CREATE PROCEDURE sp_authLogicDelete
     @UserId INT,
     @Success BIT OUTPUT
-AS
+    AS
 BEGIN
     SET NOCOUNT ON;
 

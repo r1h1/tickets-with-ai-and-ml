@@ -19,6 +19,7 @@ namespace SistemaTicketsIAApi.Models
         [Required(ErrorMessage = "La prioridad es obligatoria.")]
         public string Priority { get; set; }
 
+        [NotMapped]
         public string? Status { get; set; }
 
         [Required(ErrorMessage = "El creador es obligatorio.")]
@@ -41,12 +42,19 @@ namespace SistemaTicketsIAApi.Models
 
         public bool? ClassifiedByML { get; set; }
 
+        [NotMapped]
         public int? ChangedBy { get; set; }
+
+        [NotMapped]
         public string? ChangedByName { get; set; }
 
+        [NotMapped]
         public DateTime? CreatedAt { get; set; }
+
+        [NotMapped]
         public DateTime? ChangeDate { get; set; }
 
+        [NotMapped]
         public int? State { get; set; }
 
         [NotMapped]

@@ -26,16 +26,15 @@ namespace SistemaTicketsIAApi.Controllers
         [HttpPost("Login")]
         public async Task<IActionResult> Login([FromBody] AuthLoginRequest request)
         {
-            if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
-                return BadRequest(new { code = 400, message = "Usuario y contraseña son requeridos." });
+            if (string.IsNullOrEmpty(request.Name) || string.IsNullOrEmpty(request.Password))
+                return BadRequest(new { code = 400, message = "Nombre y contraseña son requeridos." });
 
-            var user = await _authData.GetByUserId(request.UserId);
+            var user = await _authData.GetByUserId(request.UserId, request.Name);
             if (user == null)
                 return Unauthorized(new { code = 401, message = "Credenciales inválidas." });
 
-            var hashToCheck = BCrypt.Net.BCrypt.HashPassword(request.Password + user.Salt);
             if (!BCrypt.Net.BCrypt.Verify(request.Password + user.Salt, user.PasswordHash))
-                return Unauthorized(new { code = 401, message = "Usuario y/o contraseña incorrecta." });
+                return Unauthorized(new { code = 401, message = "Nombre y/o contraseña incorrecta." });
 
             var secretKey = _config.GetSection("settings")["secretkey"];
             if (string.IsNullOrEmpty(secretKey))
@@ -48,7 +47,6 @@ namespace SistemaTicketsIAApi.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Role, user.RoleId?.ToString() ?? "")
             };
-
 
             var tokenDescriptor = new SecurityTokenDescriptor
             {
@@ -71,7 +69,7 @@ namespace SistemaTicketsIAApi.Controllers
                 code = 200,
                 token = tokenString,
                 message = "Login exitoso",
-                user = new { user.UserId, user.AuthId }
+                user = new { user.UserId, user.AuthId, user.Name }
             });
         }
 
@@ -82,12 +80,16 @@ namespace SistemaTicketsIAApi.Controllers
             if (string.IsNullOrEmpty(request.Password))
                 return BadRequest(new { code = 400, message = "Contraseña requerida." });
 
+            if (string.IsNullOrEmpty(request.Name))
+                return BadRequest(new { code = 400, message = "Nombre de usuario requerido." });
+
             string salt = Guid.NewGuid().ToString();
             string hashed = BCrypt.Net.BCrypt.HashPassword(request.Password + salt);
 
             var newUser = new Auth
             {
                 UserId = request.UserId,
+                Name = request.Name,
                 PasswordHash = hashed,
                 Salt = salt
             };
@@ -106,8 +108,13 @@ namespace SistemaTicketsIAApi.Controllers
             if (string.IsNullOrEmpty(request.NewPassword))
                 return BadRequest(new { code = 400, message = "La nueva contraseña no puede estar vacía." });
 
+            if (string.IsNullOrEmpty(request.Name))
+                return BadRequest(new { code = 400, message = "Nombre de usuario requerido para actualizar contraseña." });
+
             string newSalt = Guid.NewGuid().ToString();
             string newHashed = BCrypt.Net.BCrypt.HashPassword(request.NewPassword + newSalt);
+
+            // Aquí podría validarse que exista ese UserId + Name antes de actualizar
 
             bool updated = await _authData.UpdatePassword(request.UserId, newHashed, newSalt);
 

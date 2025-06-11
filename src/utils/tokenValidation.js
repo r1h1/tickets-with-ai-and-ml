@@ -38,7 +38,7 @@ const delayLoader = (tokenValido) => {
                 document.getElementById("content").style.display = "none";
             }
             resolve();
-        }, 300); // mili segundos
+        }, 1000); // mili segundos
     });
 };
 

@@ -47,9 +47,13 @@ builder.Services.AddCors(options =>
 });
 
 // Inyección de dependencias
-builder.Services.AddSingleton<UsersData>();
-builder.Services.AddSingleton<RolesData>();
 builder.Services.AddSingleton<AuthData>();
+builder.Services.AddSingleton<CategoryData>();
+builder.Services.AddSingleton<ChatLogData>();
+builder.Services.AddSingleton<LLMConfigData>();
+builder.Services.AddSingleton<RolesData>();
+builder.Services.AddSingleton<TicketsData>();
+builder.Services.AddSingleton<UsersData>();
 
 var app = builder.Build();
 
