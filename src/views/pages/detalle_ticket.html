@@ -46,7 +46,7 @@
                 <div class="d-flex flex-column flex-md-row gap-2" style="max-width: 500px; width: 100%;">
                     <button class="btn btn-secondary w-100 w-md-auto" data-bs-toggle="modal"
                             data-bs-target="#modalAsignarAgente">
-                        <i class="bi bi-person-circle me-2"></i>Asignar agente
+                        <i class="bi bi-person-circle me-2"></i>Re asignar agente
                     </button>
                     <a href="tickets.html" class="btn btn-secondary w-100 w-md-auto">
                         <i class="bi bi-arrow-left-circle me-2"></i>Regresar a "Tickets"
@@ -118,9 +118,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
                 <div class="modal-body">
+                    <div class="alert alert-secondary shadow-sm rounded-3" role="alert">
+                        <strong>Nota:</strong> Si la asignación manual del Bot IA falla, puedes reasignar el ticket a un
+                        agente de soporte humano según el nivel de seniority.
+                    </div>
                     <form id="formAsignarAgente">
                         <div class="mb-3">
-                            <label for="nivelSoporte" class="form-label">Nivel de soporte</label>
+                            <label for="nivelSoporte" class="form-label">Nivel de seniority</label>
                             <select class="form-select rounded-3" id="nivelSoporte">
                                 <option selected disabled>Seleccionar nivel...</option>
                                 <option value="junior">SOPORTE JUNIOR</option>
