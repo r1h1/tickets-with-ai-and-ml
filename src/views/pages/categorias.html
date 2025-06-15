@@ -62,7 +62,7 @@
                                     aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="formNuevaCategoria">
+                            <div id="formNuevaCategoria">
                                 <div class="mb-3">
                                     <label for="nombreCategoria" class="form-label">Nombre de la Categoría</label>
                                     <input type="text" class="form-control rounded-3" id="nombreCategoria"
@@ -73,11 +73,11 @@
                                     <textarea class="form-control rounded-3" id="descripcionCategoria" rows="3"
                                               placeholder="Describe el tipo de tickets que incluirá esta categoría"></textarea>
                                 </div>
-                            </form>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-secondary">Guardar Categoría</button>
+                            <button type="button" class="btn btn-secondary" id="btnGuardarCategorias">Guardar Categoría</button>
                         </div>
                     </div>
                 </div>

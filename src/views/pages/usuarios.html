@@ -62,17 +62,7 @@
                                     aria-label="Cerrar"></button>
                         </div>
                         <div class="modal-body">
-                            <form id="formNuevoUsuario">
-                                <div class="mb-3">
-                                    <label for="nombreUsuario" class="form-label">Nombre completo</label>
-                                    <input type="text" class="form-control rounded-3" id="nombreUsuario"
-                                           placeholder="Ej. Ana López">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="correoUsuario" class="form-label">Correo electrónico</label>
-                                    <input type="email" class="form-control rounded-3" id="correoUsuario"
-                                           placeholder="Ej. ana@example.com">
-                                </div>
+                            <div id="formNuevoUsuario">
                                 <div class="mb-3">
                                     <label for="rolUsuario" class="form-label">Rol</label>
                                     <select class="form-select rounded-3" id="rolUsuario">
@@ -82,7 +72,32 @@
                                         <option value="Usuario">Usuario</option>
                                     </select>
                                 </div>
-                            </form>
+                                <div class="mb-3">
+                                    <label for="nivelSeniority" class="form-label">Nivel Seniority</label>
+                                    <select class="form-select rounded-3" id="nivelSeniority">
+                                        <option selected>Seleccionar nivel</option>
+                                        <option value="SOPORTE JUNIOR">SOPORTE JUNIOR</option>
+                                        <option value="SOPORTE MEDIO">SOPORTE MEDIO</option>
+                                        <option value="SOPORTE SENIOR">SOPORTE SENIOR</option>
+                                        <option value="USUARIO">NO APLICA</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="nombreUsuario" class="form-label">Nombre completo</label>
+                                    <input type="text" class="form-control rounded-3" id="nombreUsuario"
+                                           placeholder="Ej. Juan López">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="correoUsuario" class="form-label">Correo electrónico</label>
+                                    <input type="email" class="form-control rounded-3" id="correoUsuario"
+                                           placeholder="Ej. prueba@example.com">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="claveUsuario" class="form-label">Contraseña</label>
+                                    <input type="email" class="form-control rounded-3" id="claveUsuario"
+                                           placeholder="Ej. 12345">
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>

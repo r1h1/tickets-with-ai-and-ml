@@ -71,9 +71,11 @@ const obtainCategories = async () => {
                         data: null,
                         render: function (data, type, row) {
                             return `
-                    <button onclick="editCategories(${JSON.stringify(row).replace(/'/g, "&#39;").replace(/"/g, "&quot;")})" class="btn btn-warning">Editar</button>
-                    <button onclick="deleteCategories(${row.categoryId})" class="btn btn-danger">Eliminar</button>
-                `;
+                                <button onclick='editCategories(${JSON.stringify(row).replace(/'/g, "&#39;").
+                                        replace(/"/g, "&quot;")})' class="btn btn-warning">Editar</button>
+                                <button onclick='deleteCategories(${JSON.stringify(row).replace(/'/g, "&#39;").
+                                        replace(/"/g, "&quot;")})' class="btn btn-danger">Eliminar</button>
+                            `;
                         }
                     }
                 ],
@@ -109,13 +111,118 @@ const obtainCategories = async () => {
 }
 
 
+const createCategories = async () => {
+    try {
+        const categoryId = 0;
+        const name = document.getElementById("nombreCategoria").value;
+        const description = document.getElementById("descripcionCategoria").value;
+        const state = 1;
+        const newCategoryId = null;
+        const success = null;
+
+        if (!name || !description) {
+            mostrarToast("Todos los campos son obligatorios.", "danger");
+            return;
+        }
+
+        const data = {
+            categoryId,
+            name,
+            description,
+            state,
+            newCategoryId,
+            success
+        };
+
+        const response = await sendData(CATEGORY_API, "POST", data, obtainHeaders());
+
+        if (response && response.data && response.data.success === 1) {
+            mostrarToast(response.message, "success");
+            await obtainCategories();
+            clearForm();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarCategoria'));
+            modal.hide();
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
+}
+
+
+const deleteCategories = async (row) => {
+    try {
+        const categoryId = row.categoryId;
+        const name = row.name;
+        const description = row.description;
+        const state = 0;
+        const newCategoryId = null;
+        const success = null;
+
+        if (!name || !description) {
+            mostrarToast("No se pudieron extraer los datos de la tabla.", "danger");
+            return;
+        }
+
+        const confirmacion = await Swal.fire({
+            title: `¿Estás seguro?`,
+            text: `"${name}" será eliminada.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!confirmacion.isConfirmed) {
+            mostrarToast("No te preocupes, no se modificó nada.", "secondary");
+            return;
+        }
+
+        const data = {
+            categoryId,
+            name,
+            description,
+            state,
+            newCategoryId,
+            success
+        };
+
+        const response = await sendData(CATEGORY_API, "DELETE", data, obtainHeaders());
+
+        if (response && response.data && response.data.success === 1) {
+            mostrarToast(response.message, "success");
+            await obtainCategories();
+        } else {
+            mostrarToast("No se pudo eliminar la categoría.", "danger");
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
+}
+
+
+const clearForm = () => {
+    document.getElementById("nombreCategoria").value = "";
+    document.getElementById("descripcionCategoria").value = "";
+}
+
+
+window.deleteCategories = deleteCategories;
+//window.editCategories = editCategories;
+
+
 document.addEventListener("DOMContentLoaded", async () => {
     // Variables
     const btnCerrarSesion = document.getElementById("btnCloseSession");
+    const btnGuardarCategorias = document.getElementById("btnGuardarCategorias");
 
     // Onclicks a ejecutarse
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener("click", closeSession);
+    }
+    if(btnGuardarCategorias){
+        btnGuardarCategorias.addEventListener("click", await createCategories);
     }
 
     // Funciones a ejecutarse
