@@ -1,5 +1,5 @@
 // Importar rutas de APIs para hacer uso de ellas
-import {CATEGORY_API, ROLES_API, USERS_API, USERS_GET_BY_ID_API, AUTH_API, AUTH_REGISTRAR_API} from '../config/constants.js';
+import {CATEGORY_API, ROLES_API, USERS_API, USERS_GET_BY_ID_API, AUTH_API, AUTH_REGISTRAR_API, AUTH_LOGIC_DELETE} from '../config/constants.js';
 import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 import {verificarToken} from "../utils/tokenValidation.js";
@@ -305,7 +305,6 @@ const updateUsersWithAuth = async () => {
 };
 
 
-
 const deleteUserAndAuth = async (userId) => {
     try {
         const confirmacion = await Swal.fire({
@@ -320,33 +319,59 @@ const deleteUserAndAuth = async (userId) => {
         });
 
         if (!confirmacion.isConfirmed) {
-            mostrarToast("Operación cancelada.", "secondary");
+            mostrarToast("No te preocupes, no se modificó nada.", "secondary");
             return;
         }
 
-        // 1. Eliminar usuario
-        const deleteUserResponse = await sendData(USERS_API, "DELETE", { userId, state: 0 }, obtainHeaders());
+        // 1. Obtener los datos del usuario (GET /Users/{id})
+        const getUserResponse = await fetchData(USERS_GET_BY_ID_API(userId), "GET", obtainHeaders());
 
-        if (!deleteUserResponse || deleteUserResponse.data.success !== 1) {
-            mostrarToast("No se pudo eliminar el usuario.", "danger");
+        if (!getUserResponse || !getUserResponse.data) {
+            mostrarToast("No se pudo obtener la información del usuario.", "danger");
             return;
         }
 
-        // 2. Eliminar auth
-        const deleteAuthResponse = await sendData(`${AUTH_API}/logicDelete`, { userId }, obtainHeaders());
+        const user = getUserResponse.data;
 
-        if (!deleteAuthResponse || deleteAuthResponse.data.success !== 1) {
-            mostrarToast("El usuario fue eliminado, pero no se borró el acceso.", "warning");
-            return;
+        // 2. Eliminar lógicamente el usuario
+        const deleteUserResponse = await sendData(USERS_API, "DELETE", {
+            userId: user.userId,
+            name: user.name,
+            email: user.email,
+            roleId: user.roleId,
+            seniorityLevel: user.seniorityLevel,
+            createdAt: user.createdAt,
+            state: 0
+        }, obtainHeaders());
+
+        const userEliminado = deleteUserResponse?.data?.success === 1;
+
+        const deleteAuthResponse = await sendData(`${AUTH_LOGIC_DELETE}`, "PUT", {
+            userId: user.userId
+        }, obtainHeaders());
+
+        const authEliminado = deleteAuthResponse?.code === 200;
+
+        // 4. Mostrar resultado según los dos pasos
+        if (userEliminado && authEliminado) {
+            mostrarToast("Usuario y acceso eliminados correctamente.", "success");
+        } else if (userEliminado && !authEliminado) {
+            mostrarToast("Usuario eliminado, pero no se pudo actualizar su acceso (auth).", "warning");
+        } else if (!userEliminado && authEliminado) {
+            mostrarToast("Acceso eliminado, pero no se pudo eliminar el usuario.", "warning");
+        } else {
+            mostrarToast("Error inesperado: no se logró eliminar el usuario ni el acceso.", "danger");
         }
 
-        mostrarToast("Usuario y acceso eliminados correctamente.", "success");
         await obtainsUsers();
+
     } catch (error) {
-        mostrarToast(error, "danger");
-        console.error(error);
+        console.error("Error en eliminación:", error);
+        mostrarToast("Error inesperado al eliminar el usuario.", "danger");
     }
 };
+
+
 
 
 const clearUserForm = () => {

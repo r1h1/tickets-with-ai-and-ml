@@ -53,12 +53,19 @@ namespace SistemaTicketsIAApi.Models
         public string Password { get; set; } = string.Empty;
     }
 
+    public class AuthLogicalDeleteRequest
+    {
+        [Required(ErrorMessage = "Id de usuario requerido.")]
+        public int UserId { get; set; }
+    }
+
+
     public class AuthPasswordUpdateRequest
     {
         [Required(ErrorMessage = "Id de usuario requerido.")]
         public int UserId { get; set; }
 
-        [Required(ErrorMessage = "Nombre de usuario requerido.")] // ← AGREGADO
+        [Required(ErrorMessage = "Nombre de usuario requerido.")]
         public string Email { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Nueva contraseña requerida.")]

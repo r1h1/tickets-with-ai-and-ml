@@ -72,6 +72,31 @@ WHERE u.UserId = @UserId
 END;
 GO
 
+
+CREATE PROCEDURE sp_authSelectByUserIdOnly
+    @UserId INT
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+SELECT
+    a.AuthId,
+    a.UserId,
+    a.PasswordHash,
+    a.Salt,
+    a.LastLogin,
+    a.State,
+    u.RoleId,
+    u.Email
+FROM Auth a
+         INNER JOIN Users u ON a.UserId = u.UserId
+WHERE u.UserId = @UserId
+  AND a.State = 1;
+END;
+GO
+
+
+
 CREATE PROCEDURE sp_authUpdateLastLogin
     @UserId INT,
     @Success BIT OUTPUT

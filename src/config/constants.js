@@ -7,6 +7,7 @@ const AUTH_LOGIN_API = `${AUTH_API}/Login`;
 const AUTH_REGISTRAR_API = `${AUTH_API}/Registrar`;
 const AUTH_CAMBIAR_CLAVE_API = `${AUTH_API}/CambiarClave`;
 const AUTH_VALIDAR_TOKEN_API = `${AUTH_API}/ValidarToken`;
+const AUTH_LOGIC_DELETE = `${AUTH_API}/LogicDelete`;
 
 // CATEGORY
 const CATEGORY_API = `${API_URL_BASE}/tickets/v1/Category`;
@@ -59,6 +60,7 @@ export {
     AUTH_REGISTRAR_API,
     AUTH_CAMBIAR_CLAVE_API,
     AUTH_VALIDAR_TOKEN_API,
+    AUTH_LOGIC_DELETE,
     CATEGORY_API,
     CATEGORY_GET_BY_ID_API,
     CHATLOG_API,

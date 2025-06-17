@@ -123,6 +123,25 @@ namespace SistemaTicketsIAApi.Controllers
                 : StatusCode(500, new { code = 500, message = "Error al actualizar la contraseña." });
         }
 
+        [HttpPut("LogicDelete")]
+        [Authorize]
+        public async Task<IActionResult> LogicDelete([FromBody] AuthLogicalDeleteRequest request)
+        {
+            if (request.UserId <= 0)
+                return BadRequest(new { code = 400, message = "UserId es obligatorio." });
+
+            var auth = await _authData.GetByUserIdOnly(request.UserId);
+            if (auth == null)
+                return NotFound(new { code = 404, message = "Usuario no encontrado en Auth." });
+
+            bool eliminado = await _authData.LogicalDelete(request.UserId);
+
+            return eliminado
+                ? Ok(new { code = 200, message = "Auth eliminado lógicamente." })
+                : StatusCode(500, new { code = 500, message = "Error al eliminar Auth." });
+        }
+
+
         [HttpGet("ValidarToken")]
         [Authorize]
         public IActionResult ValidarToken()

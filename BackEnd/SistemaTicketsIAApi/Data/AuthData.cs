@@ -52,6 +52,43 @@ namespace SistemaTicketsIAApi.Data
             return auth;
         }
 
+        // Validar existencia del usuario en Auth
+        public async Task<Auth?> GetByUserIdOnly(int userId)
+        {
+            Auth? auth = null;
+
+            using (var con = new SqlConnection(_connectionString))
+            {
+                await con.OpenAsync();
+                using (var cmd = new SqlCommand("sp_authSelectByUserIdOnly", con))
+                {
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@UserId", userId);
+
+                    using (var reader = await cmd.ExecuteReaderAsync())
+                    {
+                        if (await reader.ReadAsync())
+                        {
+                            auth = new Auth
+                            {
+                                AuthId = Convert.ToInt32(reader["AuthId"]),
+                                UserId = Convert.ToInt32(reader["UserId"]),
+                                PasswordHash = reader["PasswordHash"].ToString()!,
+                                Salt = reader["Salt"].ToString()!,
+                                LastLogin = reader["LastLogin"] != DBNull.Value ? Convert.ToDateTime(reader["LastLogin"]) : null,
+                                State = Convert.ToInt32(reader["State"]),
+                                RoleId = Convert.ToInt32(reader["RoleId"]),
+                                Email = reader["Email"].ToString()!
+                            };
+                        }
+                    }
+                }
+            }
+
+            return auth;
+        }
+
+
         // Registro de usuario
         public async Task<int> Insert(Auth model)
         {
