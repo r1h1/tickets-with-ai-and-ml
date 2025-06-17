@@ -90,6 +90,7 @@ const obtainsUsers = async () => {
                     {data: "email"},
                     {data: "roleId"},
                     {data: "roleName"},
+                    {data: "seniorityLevel"},
                     {
                         data: null,
                         render: function (data, type, row) {
