@@ -30,7 +30,7 @@ export const IA_PROMPT_BASE = {
         formato_respuesta: {
             prioridad: "(obligatorio) Texto: 'baja', 'media', 'alta' o 'crítica'",
             categoria: "(obligatorio) Texto: categoría sugerida (ej: 'software', 'hardware', etc.)",
-            agente_sugerido: "(obligatorio) Texto: 'soporte junior' o 'soporte senior'",
+            agente_sugerido: "(obligatorio) Texto: 'SOPORTE JUNIOR', 'SOPORTE MEDIO' o 'SOPORTE SENIOR'",
             razonamiento: "(obligatorio) 1-3 líneas justificando la prioridad",
             solucion: ["Paso 1", "Paso 2", "..."],
             keywords_detectadas: ["palabra1", "palabra2", "..."]
@@ -42,7 +42,7 @@ export const IA_PROMPT_BASE = {
                 asunto: "Poner música para evento",
                 descripcion: "Que onda IT, echenme la mano para poder poner música en la cafetería para una actividad, gracias.",
                 prioridad: "media",
-                agente_sugerido: "soporte junior",
+                agente_sugerido: "SOPORTE JUNIOR",
                 razonamiento:
                     "Aunque no es un problema técnico tradicional, implica configuración de dispositivos, permisos de red o acceso a parlantes.",
                 solucion: [
