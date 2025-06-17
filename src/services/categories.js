@@ -110,6 +110,12 @@ const obtainCategories = async () => {
     }
 }
 
+const mostrarModalCategoria = () => {
+    clearForm();
+    const modal = new bootstrap.Modal(document.getElementById('modalAgregarCategoria'));
+    modal.show();
+}
+
 
 const createCategories = async () => {
     try {
@@ -135,6 +141,64 @@ const createCategories = async () => {
         };
 
         const response = await sendData(CATEGORY_API, "POST", data, obtainHeaders());
+
+        if (response && response.data && response.data.success === 1) {
+            mostrarToast(response.message, "success");
+            await obtainCategories();
+            clearForm();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalAgregarCategoria'));
+            modal.hide();
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
+}
+
+
+const editCategories = async (row) => {
+    try {
+        const categoryId = row.categoryId;
+        const name = row.name;
+        const description = row.description;
+        document.getElementById("categoryId").value = categoryId;
+        document.getElementById("nombreCategoria").value = name;
+        document.getElementById("descripcionCategoria").value = description;
+
+        if(categoryId){
+            const modal = new bootstrap.Modal(document.getElementById('modalAgregarCategoria'));
+            modal.show();
+        }
+
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
+}
+
+
+const updateCategories = async () => {
+    try {
+        const categoryId = parseInt(document.getElementById("categoryId").value);
+        const name = document.getElementById("nombreCategoria").value;
+        const description = document.getElementById("descripcionCategoria").value;
+        const state = 1;
+        const newCategoryId = null;
+        const success = null;
+
+        if (!name || !description) {
+            mostrarToast("Todos los campos son obligatorios.", "danger");
+            return;
+        }
+
+        const data = {
+            categoryId,
+            name,
+            description,
+            state,
+            newCategoryId,
+            success
+        };
+
+        const response = await sendData(CATEGORY_API, "PUT", data, obtainHeaders());
 
         if (response && response.data && response.data.success === 1) {
             mostrarToast(response.message, "success");
@@ -203,26 +267,37 @@ const deleteCategories = async (row) => {
 
 
 const clearForm = () => {
+    document.getElementById("categoryId").value = "";
     document.getElementById("nombreCategoria").value = "";
     document.getElementById("descripcionCategoria").value = "";
 }
 
 
+window.mostrarModalCategoria = mostrarModalCategoria;
 window.deleteCategories = deleteCategories;
-//window.editCategories = editCategories;
+window.editCategories = editCategories;
 
 
 document.addEventListener("DOMContentLoaded", async () => {
     // Variables
     const btnCerrarSesion = document.getElementById("btnCloseSession");
     const btnGuardarCategorias = document.getElementById("btnGuardarCategorias");
+    const categoryId = document.getElementById("categoryId").value;
 
     // Onclicks a ejecutarse
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener("click", closeSession);
     }
-    if(btnGuardarCategorias){
-        btnGuardarCategorias.addEventListener("click", await createCategories);
+    if (btnGuardarCategorias) {
+        btnGuardarCategorias.addEventListener("click", async () => {
+            const categoryId = document.getElementById("categoryId").value;
+
+            if (categoryId == null || categoryId === "") {
+                await createCategories();
+            } else {
+                await updateCategories();
+            }
+        });
     }
 
     // Funciones a ejecutarse

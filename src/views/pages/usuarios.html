@@ -63,13 +63,10 @@
                         </div>
                         <div class="modal-body">
                             <div id="formNuevoUsuario">
+                                <input type="text" id="userId" hidden>
                                 <div class="mb-3">
                                     <label for="rolUsuario" class="form-label">Rol</label>
                                     <select class="form-select rounded-3" id="rolUsuario">
-                                        <option selected>Seleccionar rol</option>
-                                        <option value="Administrador">Administrador</option>
-                                        <option value="Soporte">Soporte</option>
-                                        <option value="Usuario">Usuario</option>
                                     </select>
                                 </div>
                                 <div class="mb-3">
@@ -101,7 +98,7 @@
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-secondary">Guardar Usuario</button>
+                            <button type="button" class="btn btn-secondary" id="btnGuardarUsuario">Guardar Usuario</button>
                         </div>
                     </div>
                 </div>
@@ -131,11 +128,6 @@
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
-    }
-
-    function mostrarModalUsuario() {
-        const modal = new bootstrap.Modal(document.getElementById('modalAgregarUsuario'));
-        modal.show();
     }
 </script>
 

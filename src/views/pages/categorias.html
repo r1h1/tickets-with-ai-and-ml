@@ -63,6 +63,7 @@
                         </div>
                         <div class="modal-body">
                             <div id="formNuevaCategoria">
+                                <input type="text" id="categoryId" hidden>
                                 <div class="mb-3">
                                     <label for="nombreCategoria" class="form-label">Nombre de la Categoría</label>
                                     <input type="text" class="form-control rounded-3" id="nombreCategoria"
@@ -105,11 +106,6 @@
 <script>
     function toggleSidebar() {
         document.getElementById('sidebar').classList.toggle('show');
-    }
-
-    function mostrarModalCategoria() {
-        const modal = new bootstrap.Modal(document.getElementById('modalAgregarCategoria'));
-        modal.show();
     }
 </script>
 
