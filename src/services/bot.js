@@ -1,9 +1,12 @@
 // Se importan palabras y consultas para que el bot pueda resolver
-import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from "./iaml.js";
+// MISMO DIRECTORIO
+import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from './iaml.js';
+import { crearNuevoTicket } from './ticketCreator.js';
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 import { mostrarToast } from '../utils/toast.js';
-import {showError} from "../utils/sweetAlert.js";
-import {verificarToken} from "../utils/tokenValidation.js";
+import { showError } from '../utils/sweetAlert.js';
+import { verificarToken } from '../utils/tokenValidation.js';
+
 
 const removeAllSessionStorage = async () => {
     sessionStorage.removeItem("token");
@@ -155,41 +158,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         const fecha = document.getElementById('fecha').value;
         const nombre = document.getElementById('nombre').value;
 
-        if (!fecha || !nombre || !asunto || !descripcion) {
-            mostrarToast('Todos los campos son obligatorios.', 'warning');
-            return;
-        }
-
         btnGuardar.disabled = true;
-        const toastCargando = mostrarToast("Analizando ticket y cargando resultados, espere un momento...", "secondary", true);
-
-        try {
-            const resultado = await clasificarTicketIA(asunto, descripcion);
-            toastCargando?.remove();
-
-            sessionStorage.setItem('ticketClasificado', JSON.stringify(resultado));
-
-            if (
-                resultado.razonamiento === 'El modelo de IA no respondió. Resolver manualmente.' ||
-                resultado.razonamiento === 'Error inesperado en la petición IA. Resolver manualmente.'
-            ) {
-                mostrarToast('El ticket fue creado, pero debe ser clasificado manualmente.', 'warning');
-            } else {
-                mostrarToast(`Ticket creado correctamente, se clasificó como ${resultado.prioridad} 
-            y se otorgó una lista de pasos para el equipo de soporte, se te atenderá según la prioridad.`, 'success');
-            }
-
-            const modalElement = document.getElementById('modalNuevoTicket');
-            const modalInstance = bootstrap.Modal.getInstance(modalElement);
-            modalInstance?.hide();
-
-            document.getElementById('formNuevoTicket')?.reset(); // limpia el form
-
-        } catch (error) {
-            toastCargando?.remove();
-            mostrarToast('Error inesperado al procesar el ticket.', 'danger');
-        } finally {
-            btnGuardar.disabled = false;
-        }
+        await crearNuevoTicket({
+            asunto,
+            descripcion,
+            fecha,
+            nombre,
+            formId: 'formNuevoTicket',
+            modalId: 'modalNuevoTicket'
+        });
+        btnGuardar.disabled = false;
     });
 });

@@ -1,6 +1,7 @@
 // ===================== IMPORTACIONES =====================
 import {clasificarTicketIA} from './iaml.js';
 import {ROLES_API, TICKETS_API, TICKETS_GET_BY_ID_API} from '../config/constants.js';
+import { crearNuevoTicket } from './ticketCreator.js';
 import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
 import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
 import {verificarToken} from '../utils/tokenValidation.js';
@@ -185,40 +186,16 @@ const initGuardarTicket = () => {
         const fecha = document.getElementById('fecha').value;
         const nombre = document.getElementById('nombre').value;
 
-        if (!fecha || !nombre || !asunto || !descripcion) {
-            mostrarToast('Todos los campos son obligatorios.', 'warning');
-            return;
-        }
-
         btnGuardar.disabled = true;
-        const toastId = mostrarToast("Analizando ticket y cargando resultados, espere un momento...", "secondary", true);
-
-        try {
-            const resultado = await clasificarTicketIA(asunto, descripcion);
-            if (toastId) toastId.remove();
-
-            if (
-                resultado.razonamiento === 'El bot no respondió. Se creó el ticket con prioridad media.' ||
-                resultado.razonamiento === 'Error inesperado en el bot. Se creó el ticket con prioridad media.'
-            ) {
-                mostrarToast('El ticket fue creado, pero debe ser clasificado manualmente.', 'warning');
-            } else {
-                mostrarToast(`Ticket creado correctamente, se clasificó como ${resultado.prioridad} y se otorgó una lista de pasos para el equipo de soporte.`, 'success');
-            }
-
-            const modalElement = document.getElementById('modalNuevoTicket');
-            const modalInstance = bootstrap.Modal.getInstance(modalElement);
-            modalInstance?.hide();
-
-            // (Opcional) Limpiar campos
-            document.getElementById('formNuevoTicket').reset();
-
-        } catch (error) {
-            if (toastId) toastId.remove();
-            mostrarToast('Error inesperado al procesar el ticket.', 'danger');
-        } finally {
-            btnGuardar.disabled = false;
-        }
+        await crearNuevoTicket({
+            asunto,
+            descripcion,
+            fecha,
+            nombre,
+            formId: 'formNuevoTicket',
+            modalId: 'modalNuevoTicket'
+        });
+        btnGuardar.disabled = false;
     });
 };
 
