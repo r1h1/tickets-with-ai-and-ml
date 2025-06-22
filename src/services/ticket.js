@@ -1,11 +1,10 @@
 // ===================== IMPORTACIONES =====================
-import {clasificarTicketIA} from './iaml.js';
-import {ROLES_API, TICKETS_API, TICKETS_GET_BY_ID_API} from '../config/constants.js';
+import { ROLES_API, TICKETS_API, CATEGORY_API } from '../config/constants.js';
 import { crearNuevoTicket } from './ticketCreator.js';
-import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
-import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
-import {verificarToken} from '../utils/tokenValidation.js';
-import {mostrarToast} from '../utils/toast.js';
+import { showError } from '../utils/sweetAlert.js';
+import { fetchData } from '../data/apiMethods.js';
+import { verificarToken } from '../utils/tokenValidation.js';
+import { mostrarToast } from '../utils/toast.js';
 
 const removeAllSessionStorage = () => {
     sessionStorage.removeItem("token");
@@ -50,8 +49,32 @@ const obtainHeaders = () => {
         return null;
     }
     //retorna el token
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
+
+
+// Retornar categorias creadas
+const obtainCategories = async () => {
+    try {
+        const response = await fetchData(CATEGORY_API, "GET", obtainHeaders());
+
+        if (response) {
+            const categoriesSelect = document.getElementById('categoria');
+            categoriesSelect.innerHTML = '<option value="">Selecciona una categoría...</option>';
+
+            response.data.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.categoryId;
+                option.textContent = category.name;
+                categoriesSelect.appendChild(option);
+            });
+        } else {
+            mostrarToast("No se trajeron las categorias.", "warning");
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
+}
 
 
 const obtainTickets = async () => {
@@ -65,27 +88,25 @@ const obtainTickets = async () => {
                 columns: [
                     {
                         data: "ticketId",
-                        title: "No. de Ticket",
                         render: function (data, type, row) {
                             return `<a href="detalle_ticket.html?q=${data}" class="fw-bold text-primary">${data}</a>`;
                         }
                     },
                     {
                         data: "createdAt",
-                        title: "Fecha",
                         render: data => new Date(data).toLocaleString()
                     },
-                    {data: "createdByName", title: "Nombre"},
-                    {data: "title", title: "Asunto"},
-                    {data: "status", title: "Estado"},
+                    { data: "createdByName" },
                     {
-                        data: "changeDate",
-                        title: "Última respuesta",
-                        render: data => new Date(data).toLocaleString()
+                        data: "assignedToName",
+                        render: function (data, type, row) {
+                            return data && data.trim() !== "" ? data : "Sin asignar";
+                        }
                     },
+                    { data: "title" },
+                    { data: "status" },
                     {
                         data: "priority",
-                        title: "Prioridad",
                         render: function (data) {
                             let className = "";
 
@@ -184,7 +205,8 @@ const initGuardarTicket = () => {
         const asunto = document.getElementById('asunto').value.trim();
         const descripcion = document.getElementById('descripcion').value.trim();
         const fecha = document.getElementById('fecha').value;
-        const nombre = document.getElementById('nombre').value;
+        const nombre = "";
+        const categoriaId = document.getElementById('categoria').value;
 
         btnGuardar.disabled = true;
         await crearNuevoTicket({
@@ -192,6 +214,7 @@ const initGuardarTicket = () => {
             descripcion,
             fecha,
             nombre,
+            categoriaId,
             formId: 'formNuevoTicket',
             modalId: 'modalNuevoTicket'
         });
@@ -205,6 +228,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById("btnCloseSession")?.addEventListener("click", closeSession);
     await checkTokenAndLoginInfo();
     await obtainTickets();
+    await obtainCategories();
     initUI();
     initGuardarTicket();
 });

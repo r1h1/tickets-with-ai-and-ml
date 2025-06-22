@@ -1,9 +1,9 @@
 // Importar rutas de APIs para hacer uso de ellas
-import {ROLES_API, TICKETS_API, TICKETS_GET_BY_ID_API} from '../config/constants.js';
-import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
-import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
-import {verificarToken} from "../utils/tokenValidation.js";
-import {mostrarToast} from "../utils/toast.js";
+import { ROLES_API, USERS_API, TICKETS_GET_BY_ID_API } from '../config/constants.js';
+import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import { verificarToken } from "../utils/tokenValidation.js";
+import { mostrarToast } from "../utils/toast.js";
 
 // Función para cerrar sesión
 const removeAllSessionStorage = () => {
@@ -43,7 +43,7 @@ const obtainHeaders = () => {
         closeSession();
         return null;
     }
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
 
 
@@ -139,30 +139,53 @@ const obtainTicketDetail = async () => {
 };
 
 
-
-// Selector dinámico de agentes por nivel
-const agentesPorNivel = {
-    junior: ["Luis Pérez", "Andrea Gómez", "Carlos Soto"],
-    mid: ["Mario Cifuentes", "Lucía Ramírez"],
-    senior: ["Laura León", "Fernando Díaz"]
-};
-
-const inicializarSelectorAgente = () => {
+const inicializarSelectorAgente = async () => {
     const selectNivel = document.getElementById("nivelSoporte");
-    if (!selectNivel) return;
+    const selectAgente = document.getElementById("agenteSoporte");
+    if (!selectNivel || !selectAgente) return;
 
-    selectNivel.addEventListener("change", function () {
-        const nivel = this.value;
-        const selectAgente = document.getElementById("agenteSoporte");
+    let agentes = [];
+
+    try {
+        const response = await fetchData(USERS_API, "GET", obtainHeaders());
+        if (response?.data) {
+            agentes = response.data.filter(user =>
+                user.seniorityLevel && user.isActive === 1
+            );
+        }
+    } catch (error) {
+        console.error("Error obteniendo agentes:", error);
+        return;
+    }
+
+    // Evento al cambiar el nivel
+    selectNivel.addEventListener("change", () => {
+        const nivel = selectNivel.value.toUpperCase(); // match con el campo `seniorityLevel`
         selectAgente.innerHTML = '<option disabled selected>Seleccionar agente</option>';
-        agentesPorNivel[nivel].forEach(nombre => {
+        
+        // Filtrar por nivel de forma segura
+        const filtrados = agentes.filter(a =>
+            a.seniorityLevel?.trim().toUpperCase() === nivel.trim().toUpperCase()
+        );
+
+        if (filtrados.length === 0) {
+            const opt = document.createElement("option");
+            opt.disabled = true;
+            opt.textContent = "No hay agentes disponibles";
+            selectAgente.appendChild(opt);
+            return;
+        }
+
+        // Agregar opciones
+        filtrados.forEach(agent => {
             const option = document.createElement("option");
-            option.textContent = nombre;
-            option.value = nombre;
+            option.value = agent.userId;
+            option.textContent = agent.name;
             selectAgente.appendChild(option);
         });
     });
 };
+
 
 // Mostrar/ocultar sidebar
 function toggleSidebar() {

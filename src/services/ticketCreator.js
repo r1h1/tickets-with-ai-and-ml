@@ -32,8 +32,8 @@ const obtenerAgentePorPrioridad = async (prioridad) => {
     }
 };
 
-export const crearNuevoTicket = async ({asunto, descripcion, fecha, nombre, formId, modalId}) => {
-    if (!fecha || !nombre || !asunto || !descripcion) {
+export const crearNuevoTicket = async ({asunto, descripcion, fecha, categoriaId, formId, modalId}) => {
+    if (!fecha || !asunto || !descripcion) {
         mostrarToast('Todos los campos son obligatorios.', 'warning');
         return;
     }
@@ -61,7 +61,7 @@ export const crearNuevoTicket = async ({asunto, descripcion, fecha, nombre, form
             createdByName,
             assignedTo: agente?.userId ?? null,
             assignedToName: agente?.name ?? '',
-            categoryId: resultado.categoriaId ?? 1,
+            categoryId: categoriaId ?? 1,
             categoryName: resultado.categoria ?? '',
             suggestedAgent: resultado.agente_sugerido ?? '',
             reasoning: resultado.razonamiento ?? '',
@@ -76,8 +76,6 @@ export const crearNuevoTicket = async ({asunto, descripcion, fecha, nombre, form
             newTicketId: null,
             success: null
         };
-
-        console.log("Payload enviado:", createdBy, createdByName);
 
         const res = await sendData(TICKETS_API, 'POST', payload);
         const exito = res?.data?.success === 1;

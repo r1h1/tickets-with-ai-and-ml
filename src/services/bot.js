@@ -1,6 +1,7 @@
 // Se importan palabras y consultas para que el bot pueda resolver
 // MISMO DIRECTORIO
 import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from './iaml.js';
+import {CATEGORY_API, CATEGORY_GET_BY_ID_API} from '../config/constants.js';
 import { crearNuevoTicket } from './ticketCreator.js';
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 import { mostrarToast } from '../utils/toast.js';
@@ -24,6 +25,17 @@ const closeSession = () => {
         showError("Error al cerrar sesión:", error);
     }
 }
+
+
+const obtainHeaders = () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+        closeSession();
+        return null;
+    }
+    //retorna el token
+    return {"Authorization": `Bearer ${token}`};
+};
 
 const checkTokenAndLoginInfo = async () => {
     const token = sessionStorage.getItem("token");
@@ -81,6 +93,31 @@ function mostrarAviso(tipo, mensaje) {
     document.getElementById('responseArea').prepend(aviso);
 }
 
+
+// Retornar categorias creadas
+const obtainCategories = async () => {
+    try {
+        const response = await fetchData(CATEGORY_API, "GET", obtainHeaders());
+
+        if (response) {
+            const categoria = document.getElementById('categoria');
+            categoria.innerHTML = '<option value="">Selecciona una categoría...</option>';
+
+            response.data.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category.categoryId;
+                option.textContent = category.name;
+                categoria.appendChild(option);
+            });
+        } else {
+            mostrarToast("No se trajeron las categorias.", "warning");
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
+}
+
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', async () => {
     sessionStorage.setItem('contadorMensajes', sessionStorage.getItem('contadorMensajes') || '0');
@@ -95,6 +132,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Funciones a ejecutarse
     await checkTokenAndLoginInfo();
+    await obtainCategories();
 
     document.getElementById('formBot')?.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -151,12 +189,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const btnGuardar = document.querySelector('#modalNuevoTicket .modal-footer .btn.btn-secondary:last-child');
-
     btnGuardar?.addEventListener('click', async () => {
         const asunto = document.getElementById('asunto').value.trim();
         const descripcion = document.getElementById('descripcion').value.trim();
         const fecha = document.getElementById('fecha').value;
-        const nombre = document.getElementById('nombre').value;
+        const categoriaId = document.getElementById('categoria').value;
+        const nombre = "";
 
         btnGuardar.disabled = true;
         await crearNuevoTicket({
@@ -164,6 +202,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             descripcion,
             fecha,
             nombre,
+            categoriaId,
             formId: 'formNuevoTicket',
             modalId: 'modalNuevoTicket'
         });
