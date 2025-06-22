@@ -91,9 +91,9 @@ const obtainTicketDetail = async () => {
                 document.getElementById("bot-agent").textContent = ticket.suggestedAgent?.toUpperCase() || "NO DETECTADO";
                 document.getElementById("bot-reasoning").textContent = ticket.reasoning || "Sin razonamiento";
 
-                // Mostrar solución como lista
                 const solucionList = document.getElementById("bot-solution");
                 solucionList.innerHTML = "";
+
                 if (ticket.solution && ticket.solution.trim() !== "") {
                     const pasos = ticket.solution.split(". ");
                     for (let i = 0; i < pasos.length; i++) {
@@ -162,7 +162,7 @@ const inicializarSelectorAgente = async () => {
     selectNivel.addEventListener("change", () => {
         const nivel = selectNivel.value.toUpperCase(); // match con el campo `seniorityLevel`
         selectAgente.innerHTML = '<option disabled selected>Seleccionar agente</option>';
-        
+
         // Filtrar por nivel de forma segura
         const filtrados = agentes.filter(a =>
             a.seniorityLevel?.trim().toUpperCase() === nivel.trim().toUpperCase()

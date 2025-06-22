@@ -50,7 +50,7 @@ CREATE TABLE Tickets
     Description    NVARCHAR(MAX),
     Problem        NVARCHAR(MAX),
     Priority       NVARCHAR(20), -- CRITICAL, HIGH, MEDIUM, LOW
-    Status         NVARCHAR(20) DEFAULT 'New',
+    Status         NVARCHAR(20) DEFAULT 'Nuevo',
     CreatedAt      DATETIME DEFAULT GETDATE(),
     CreatedBy      INT NOT NULL,
     AssignedTo     INT NULL,
