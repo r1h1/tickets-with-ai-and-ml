@@ -1,4 +1,6 @@
-// Constante para consumo de APIs para support ia ml
+// ============================
+// API BASES
+// ============================
 const API_URL_BASE = 'https://iamlsupportsystem.somee.com';
 
 // AUTH
@@ -34,25 +36,59 @@ const TICKETS_GET_BY_ID_API = (id) => `${TICKETS_API}/${id}`;
 const USERS_API = `${API_URL_BASE}/tickets/v1/Users`;
 const USERS_GET_BY_ID_API = (id) => `${USERS_API}/${id}`;
 
-
-
-// Constante para consumo de API openrouter IA / ML
+// OPENROUTER IA CHAT
 const API_IA_URL_BASE = 'https://openrouter.ai/api/v1/chat/completions';
-const API_IA_KEYS = [
-    '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',
-    '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'
-];
 
-// Modelos gratuitos confirmados, multilingües y con buen soporte para español
-const IA_MODELS = [
-    'meta-llama/llama-4-scout:free', //funciona
-    'mistralai/mistral-small-3.1-24b-instruct:free', //funciona
-    'deepseek/deepseek-r1:free', //funciona
-    'nousresearch/deephermes-3-mistral-24b-preview:free', //funciona
-    'opengvlab/internvl3-14b:free', //funciona
-    'deepseek/deepseek-prover-v2:free' //funciona
-];
+// IMPORTS
+import { fetchData } from '../data/apiMethods.js';
 
+// OBTENER HEADERS CON EL TOKEN
+const obtainHeaders = () => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+        console.warn("No hay token, redirigiendo a login...");
+        window.location.href = "../../../index.html";
+        return null;
+    }
+    return { "Authorization": `Bearer ${token}` };
+};
+
+// OBTENER CONFIGURACIONES DE IA
+const obtainIAModelsAndApiKeys = async () => {
+    try {
+        const response = await fetchData(LLMCONFIG_API, "GET", obtainHeaders);
+
+        if (response?.success && Array.isArray(response.data)) {
+            const activeModels = response.data.filter(item => item.isActive);
+
+            const models = activeModels.map(item => item.modelName);
+            const apiKeys = [...new Set(activeModels.map(item => item.apiKey))]; // evita repetidos
+
+            return { models, apiKeys };
+        } else {
+            console.warn("No se pudieron obtener modelos IA:", response?.message);
+            return { models: [], apiKeys: [] };
+        }
+
+    } catch (error) {
+        console.error("Error al obtener configuraciones IA:", error);
+        return { models: [], apiKeys: [] };
+    }
+}
+
+// ARREGLOS DINAMICOS PARA ENVIAR LOS MODELOS Y LAS API KEYS
+let IA_MODELS = [];
+let API_IA_KEYS = [];
+
+(async function initializeIAConfig() {
+    const { models, apiKeys } = await obtainIAModelsAndApiKeys();
+    IA_MODELS = models;
+    API_IA_KEYS = apiKeys;
+    console.log("Modelos IA cargados.");
+})();
+
+
+// EXPORTAR CONFIGURACIONES
 export {
     API_URL_BASE,
     AUTH_API,
@@ -76,5 +112,6 @@ export {
     USERS_GET_BY_ID_API,
     API_IA_URL_BASE,
     API_IA_KEYS,
-    IA_MODELS
+    IA_MODELS,
+    obtainIAModelsAndApiKeys
 };

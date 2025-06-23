@@ -33,8 +33,8 @@ const obtenerAgentePorPrioridad = async (prioridad) => {
 };
 
 export const crearNuevoTicket = async ({asunto, descripcion, fecha, categoriaId, formId, modalId}) => {
-    if (!fecha || !asunto || !descripcion) {
-        mostrarToast('Todos los campos son obligatorios.', 'warning');
+    if (!fecha || !asunto || !descripcion || !categoriaId) {
+        mostrarToast('Todos los campos son obligatorios.', 'danger');
         return;
     }
 
