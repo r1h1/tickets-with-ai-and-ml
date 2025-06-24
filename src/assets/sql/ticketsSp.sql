@@ -123,7 +123,8 @@ FROM Tickets T
          LEFT JOIN Users AU ON T.AssignedTo = AU.UserId
          LEFT JOIN Users CHU ON T.ChangedBy = CHU.UserId
          LEFT JOIN Categories C ON T.CategoryId = C.CategoryId
-WHERE T.State = 1;
+WHERE T.State = 1
+AND T.TicketId <> 1;
 END;
 GO
 

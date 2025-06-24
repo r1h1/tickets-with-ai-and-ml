@@ -92,3 +92,49 @@ CREATE TABLE LLM_Config
     Notes     NVARCHAR(255),
     State     BIT DEFAULT 1
 );
+
+-- Insert de ticket para consulta de bot
+SET IDENTITY_INSERT Tickets ON;
+
+INSERT INTO Tickets (
+    TicketId,
+    Title,
+    Description,
+    Problem,
+    Priority,
+    Status,
+    CreatedAt,
+    CreatedBy,
+    AssignedTo,
+    ClassifiedByML,
+    CategoryId,
+    SuggestedAgent,
+    Reasoning,
+    Solution,
+    Keywords,
+    ChangedBy,
+    ChangeDate,
+    State
+)
+VALUES (
+           1,
+           'EJEMPLO DE TICKET PARA CONSULTAS DEL BOT',
+           'Este ticket es de ejemplo y se utiliza exclusivamente para registrar consultas automáticas del bot. No requiere atención humana.',
+           'Consulta simulada generada por el bot para pruebas, registros o almacenamiento de respuestas automatizadas.',
+           'baja',
+           'New',
+           GETDATE(),
+           1,
+           19,
+           1,
+           1,
+           'SOPORTE JUNIOR',
+           'Este ticket fue creado manualmente como plantilla para que el sistema almacene interacciones del bot sin interferir con tickets reales.',
+           'Este ticket no tiene una solución asignada, ya que es solo un contenedor lógico para registrar respuestas automáticas del bot.',
+           'bot, ejemplo, automático, dummy, registro, IA',
+           NULL,
+           NULL,
+           1
+       );
+
+SET IDENTITY_INSERT Tickets OFF;

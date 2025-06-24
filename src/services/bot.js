@@ -1,7 +1,7 @@
 // Se importan palabras y consultas para que el bot pueda resolver
 // MISMO DIRECTORIO
 import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from './iaml.js';
-import {CATEGORY_API, CATEGORY_GET_BY_ID_API} from '../config/constants.js';
+import {CATEGORY_API, CATEGORY_GET_BY_ID_API, CHATLOG_API, CHATLOG_GET_BY_ID_API} from '../config/constants.js';
 import { crearNuevoTicket } from './ticketCreator.js';
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 import { mostrarToast } from '../utils/toast.js';
@@ -118,6 +118,45 @@ const obtainCategories = async () => {
 }
 
 
+// Crear logs en base de datos de las consultas de IA a los usuarios
+const createChatLog = async (question, answer) => {
+    try {
+        const ticketId = parseInt(sessionStorage.getItem("ticketId")) || 1;
+        const createdAt = new Date().toISOString();
+        const logId = 0;
+        const newLogId = null;
+        const success = null;
+
+        if (!question || !answer) {
+            mostrarToast("Faltan datos para guardar el chat.", "danger");
+            return;
+        }
+
+        const data = {
+            logId,
+            ticketId,
+            question,
+            answer,
+            createdAt,
+            newLogId,
+            success
+        };
+
+        const response = await sendData(CHATLOG_API, "POST", data, obtainHeaders());
+
+        if (response && response.data && response.data.success === 1) {
+            mostrarToast("La consulta se guardó con éxito.", "success");
+        } else {
+            mostrarToast("No se pudo guardar la consulta.", "danger");
+        }
+    } catch (error) {
+        console.error("Error al guardar el log del chat:", error);
+        mostrarToast("Error al guardar el chat.", "danger");
+    }
+};
+
+
+
 // Inicialización
 document.addEventListener('DOMContentLoaded', async () => {
     sessionStorage.setItem('contadorMensajes', sessionStorage.getItem('contadorMensajes') || '0');
@@ -162,6 +201,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             botCard.className = 'message-card bg-light border';
             botCard.innerHTML = `<strong>Bot:</strong><br>${respuesta}`;
             document.getElementById('responseArea').prepend(botCard);
+
+            // Guarda la consulta en una tabla log de consultas por usuario
+            await createChatLog(mensaje, respuesta);
 
             sessionStorage.setItem('contadorMensajes', (contador + 1).toString());
         } catch (error) {
