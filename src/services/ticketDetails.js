@@ -1,9 +1,9 @@
 // Importar rutas de APIs para hacer uso de ellas
-import { ROLES_API, USERS_API, TICKETS_GET_BY_ID_API } from '../config/constants.js';
-import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
-import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
-import { verificarToken } from "../utils/tokenValidation.js";
-import { mostrarToast } from "../utils/toast.js";
+import {ROLES_API, USERS_API, TICKETS_GET_BY_ID_API, CATEGORY_API, TICKETS_API} from '../config/constants.js';
+import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
+import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
+import {verificarToken} from "../utils/tokenValidation.js";
+import {mostrarToast} from "../utils/toast.js";
 
 // Función para cerrar sesión
 const removeAllSessionStorage = () => {
@@ -43,7 +43,7 @@ const obtainHeaders = () => {
         closeSession();
         return null;
     }
-    return { "Authorization": `Bearer ${token}` };
+    return {"Authorization": `Bearer ${token}`};
 };
 
 
@@ -53,6 +53,7 @@ const obtainTicketDetail = async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const idTicket = urlParams.get("q").toString();
         document.getElementById("ticketNumber").textContent = idTicket || "Sin número de ticket";
+
         const response = await fetchData(TICKETS_GET_BY_ID_API(idTicket), "GET", obtainHeaders());
 
         if (response && response.data) {
@@ -66,6 +67,7 @@ const obtainTicketDetail = async () => {
             document.getElementById("ticket-date").textContent = new Date(ticket.createdAt).toLocaleString("es-GT");
             document.getElementById("ticket-assigned-to").textContent = ticket.assignedToName || "Sin asignar";
             document.getElementById("ticket-category").textContent = ticket.categoryName || "Sin categoría";
+            document.getElementById("estado").value = ticket.status || "New";
 
             // Prioridad visual
             const prioridadTag = document.getElementById("ticket-priority");
@@ -161,7 +163,7 @@ const inicializarSelectorAgente = async () => {
     // Evento al cambiar el nivel
     selectNivel.addEventListener("change", () => {
         const nivel = selectNivel.value.toUpperCase(); // match con el campo `seniorityLevel`
-        selectAgente.innerHTML = '<option disabled selected>Seleccionar agente</option>';
+        selectAgente.innerHTML = '<option value="" disabled selected>Seleccionar agente</option>';
 
         // Filtrar por nivel de forma segura
         const filtrados = agentes.filter(a =>
@@ -187,6 +189,137 @@ const inicializarSelectorAgente = async () => {
 };
 
 
+const manualAgentAssign = async () => {
+    try {
+        const nivelSoporte = document.getElementById("nivelSoporte").value;
+        const agenteSoporte = document.getElementById("agenteSoporte").value;
+        const agenteSoporteNombre = document.getElementById("agenteSoporte").selectedOptions[0].text;
+        const tokenPayload = JSON.parse(atob(sessionStorage.getItem("token").split('.')[1]));
+        const changedBy = parseInt(tokenPayload.nameid || tokenPayload.userId);
+
+        if (!nivelSoporte || !agenteSoporte) {
+            mostrarToast("Todos los datos son obligatorios.", "danger");
+            return;
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketId = urlParams.get("q");
+
+        const responseDetalle = await fetchData(TICKETS_GET_BY_ID_API(ticketId), "GET", obtainHeaders());
+
+        if (!responseDetalle || !responseDetalle.data) {
+            mostrarToast("No se pudo obtener el detalle del ticket.", "danger");
+            return;
+        }
+
+        const ticket = responseDetalle.data;
+
+        const payload = {
+            ticketId: ticket.ticketId,
+            title: ticket.title,
+            description: ticket.description,
+            problem: ticket.problem,
+            priority: ticket.priority,
+            status: ticket.status,
+            createdBy: ticket.createdBy,
+            createdByName: ticket.createdByName,
+            assignedTo: parseInt(agenteSoporte),
+            assignedToName: agenteSoporteNombre,
+            categoryId: ticket.categoryId,
+            categoryName: ticket.categoryName,
+            suggestedAgent: ticket.suggestedAgent,
+            reasoning: ticket.reasoning,
+            solution: ticket.solution,
+            keywords: ticket.keywords,
+            classifiedByML: ticket.classifiedByML,
+            changedBy: changedBy,
+            changedByName: ticket.createdByName,
+            createdAt: ticket.createdAt,
+            changeDate: new Date().toISOString(),
+            state: ticket.state,
+            newTicketId: ticket.newTicketId ?? 0,
+            success: ticket.success ?? 0
+        };
+
+        const updateResponse = await sendData(TICKETS_API, "PUT", payload, obtainHeaders());
+
+        if (updateResponse?.data?.success === 1) {
+            mostrarToast("Agente asignado de manera manual correctamente.", "success");
+            await obtainTicketDetail();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalAsignarAgente'));
+            modal.hide();
+        } else {
+            mostrarToast("No se pudo reasignar el agente de manera manual.", "danger");
+        }
+
+    } catch (error) {
+        console.error(error);
+        mostrarToast("Error al asignar agente: " + error.message, "danger");
+    }
+};
+
+
+const actualizarEstadoTicket = async () => {
+    try {
+        const nuevoEstado = document.getElementById("estado").value;
+        const tokenPayload = JSON.parse(atob(sessionStorage.getItem("token").split('.')[1]));
+        const changedBy = parseInt(tokenPayload.nameid || tokenPayload.userId);
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const ticketId = urlParams.get("q");
+
+        const responseDetalle = await fetchData(TICKETS_GET_BY_ID_API(ticketId), "GET", obtainHeaders());
+
+        if (!responseDetalle || !responseDetalle.data) {
+            mostrarToast("No se pudo obtener el detalle del ticket.", "danger");
+            return;
+        }
+
+        const ticket = responseDetalle.data;
+
+        const payload = {
+            ticketId: ticket.ticketId,
+            title: ticket.title,
+            description: ticket.description,
+            problem: ticket.problem,
+            priority: ticket.priority,
+            status: nuevoEstado,
+            createdBy: ticket.createdBy,
+            createdByName: ticket.createdByName,
+            assignedTo: ticket.assignedTo,
+            assignedToName: ticket.assignedToName,
+            categoryId: ticket.categoryId,
+            categoryName: ticket.categoryName,
+            suggestedAgent: ticket.suggestedAgent,
+            reasoning: ticket.reasoning,
+            solution: ticket.solution,
+            keywords: ticket.keywords,
+            classifiedByML: ticket.classifiedByML,
+            changedBy: changedBy,
+            changedByName: ticket.createdByName,
+            createdAt: ticket.createdAt,
+            changeDate: new Date().toISOString(),
+            state: ticket.state,
+            newTicketId: ticket.newTicketId ?? 0,
+            success: ticket.success ?? 0
+        };
+
+        const updateResponse = await sendData(TICKETS_API, "PUT", payload, obtainHeaders());
+
+        if (updateResponse?.data?.success === 1) {
+            mostrarToast("Estado del ticket actualizado correctamente.", "success");
+            await obtainTicketDetail();
+        } else {
+            mostrarToast("No se pudo actualizar el estado del ticket.", "danger");
+        }
+
+    } catch (error) {
+        console.error(error);
+        mostrarToast("Error al actualizar estado: " + error.message, "danger");
+    }
+};
+
+
 // Mostrar/ocultar sidebar
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('show');
@@ -195,11 +328,21 @@ function toggleSidebar() {
 // Cuando carga el DOM
 document.addEventListener("DOMContentLoaded", async () => {
     const btnCerrarSesion = document.getElementById("btnCloseSession");
+    const btnAgentAssign = document.getElementById("btnAgentAssign");
+
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener("click", closeSession);
+    }
+    if (btnAgentAssign) {
+        btnAgentAssign.addEventListener("click", manualAgentAssign);
+    }
+
+    const estadoSelect = document.getElementById("estado");
+    if (estadoSelect) {
+        estadoSelect.addEventListener("change", actualizarEstadoTicket);
     }
 
     await checkTokenAndLoginInfo();
     await obtainTicketDetail();
-    inicializarSelectorAgente();
+    await inicializarSelectorAgente();
 });

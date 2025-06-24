@@ -12,176 +12,166 @@
 
 <body>
 
-    <!-- Pantalla de carga -->
-    <div id="loader" class="loader-container">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Cargando...</span>
-        </div>
+<!-- Pantalla de carga -->
+<div id="loader" class="loader-container">
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Cargando...</span>
     </div>
+</div>
 
-    <div id="content">
-        <nav class="navbar px-3 d-flex justify-content-between">
-            <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <button class="btn btn-secondary m-3" id="btnCloseSession"><i class="bi bi-box-arrow-right me-2"></i>Cerrar
-                Sesión
-            </button>
-        </nav>
-        <div class="d-flex">
-            <div class="sidebar" id="sidebar">
-                <div class="text-center">
-                    <img src="../../assets/img/logo.png" alt="Logo" class="mb-4 mt-4" width="120px">
-                </div>
-                <div class="px-3">
-                    <a href="start.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
-                    <a href="bot.html"><i class="bi bi-robot me-2"></i>Base de Conocimiento (Bot)</a>
-                    <a href="tickets.html" class="active"><i class="bi bi-ticket-detailed me-2"></i>Tickets</a>
-                    <a href="categorias.html"><i class="bi bi-tags me-2"></i>Categorías</a>
-                    <a href="usuarios.html"><i class="bi bi-people me-2"></i>Usuarios</a>
-                    <a href="roles.html"><i class="bi bi-person-badge me-2"></i>Roles</a>
-                </div>
+<div id="content">
+    <nav class="navbar px-3 d-flex justify-content-between">
+        <button class="navbar-toggler" type="button" onclick="toggleSidebar()">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <button class="btn btn-secondary m-3" id="btnCloseSession"><i class="bi bi-box-arrow-right me-2"></i>Cerrar
+            Sesión
+        </button>
+    </nav>
+    <div class="d-flex">
+        <div class="sidebar" id="sidebar">
+            <div class="text-center">
+                <img src="../../assets/img/logo.png" alt="Logo" class="mb-4 mt-4" width="120px">
             </div>
-            <div class="container-fluid p-5">
-                <div
-                    class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
-                    <h5 class="mb-0">Ticket no. #<span id="ticketNumber"></span></h5>
-                    <div class="d-flex flex-column flex-md-row gap-2" style="max-width: 500px; width: 100%;">
-                        <button class="btn btn-secondary w-100 w-md-auto" data-bs-toggle="modal"
+            <div class="px-3">
+                <a href="start.html"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                <a href="bot.html"><i class="bi bi-robot me-2"></i>Base de Conocimiento (Bot)</a>
+                <a href="tickets.html" class="active"><i class="bi bi-ticket-detailed me-2"></i>Tickets</a>
+                <a href="categorias.html"><i class="bi bi-tags me-2"></i>Categorías</a>
+                <a href="usuarios.html"><i class="bi bi-people me-2"></i>Usuarios</a>
+                <a href="roles.html"><i class="bi bi-person-badge me-2"></i>Roles</a>
+            </div>
+        </div>
+        <div class="container-fluid p-5">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-3 mb-4">
+                <div>
+                    <h4 class="mb-1">Ticket no. #<span id="ticketNumber"></span></h4>
+                    <p class="mb-0"><strong>Creado por:</strong> <span id="ticket-created-by"></span></p>
+                </div>
+
+                <div class="d-flex flex-column flex-md-row gap-2" style="max-width: 500px; width: 100%;">
+                    <button class="btn btn-secondary w-100 w-md-auto" data-bs-toggle="modal"
                             data-bs-target="#modalAsignarAgente">
-                            <i class="bi bi-person-circle me-2"></i>Re asignar agente
-                        </button>
-                        <a href="tickets.html" class="btn btn-secondary w-100 w-md-auto">
-                            <i class="bi bi-arrow-left-circle me-2"></i>Regresar a "Tickets"
-                        </a>
-                    </div>
-                </div>
-
-                <p class="text-secondary mb-4">
-                    Asignación automática de prioridad según requerimiento de usuario, agente sugerido según dificultad,
-                    razonamiento de requerimiento, pasos de solución para resolución y palabras clave extraídas.
-                    Permite asignación autónoma a través del bot o manual según disponibilidad y nivel de seniority.
-                </p>
-
-                <div class="row">
-                    <!-- Sugerencia del Bot -->
-                    <div class="col-sm-12 col-md-6 mb-3">
-                        <div class="bot-card h-auto">
-                            <h5 class="mb-4">Resolución del Bot</h5>
-                            <p><strong>Fecha de creación:</strong> <span id="ticket-date"></span></p>
-                            <p><strong>Creado por:</strong> <span id="ticket-created-by"></span></p>
-                            <p><strong>Prioridad:</strong> <span id="ticket-priority" class="priority-tag"></span></p>
-                            <p><strong>Categoría:</strong> <span id="ticket-category"></span></p>
-                            <p><strong>Agente Sugerido:</strong> <span id="bot-agent"></span></p>
-                            <p><strong>Conclusión: </strong><span id="bot-reasoning"></span></p>
-                            <div class="alert alert-secondary shadow-sm rounded-3" role="alert">
-                                <strong>Pasos para solución:</strong>
-                                <ul id="bot-solution" class="mb-0 mt-2 ps-3"></ul>
-                            </div>
-                            <p><strong>Palabras Clave Detectadas: </strong><span id="bot-keywords"></span></p>
-                        </div>
-                    </div>
-
-                    <!-- Información general, descripción y resolución -->
-                    <div class="col-sm-12 col-md-6 mb-4">
-                        <div class="card shadow-sm rounded-4 mb-2 p-4 h-auto">
-                            <h5 class="mb-4">Información General</h5>
-                            <p><strong>Asunto:</strong> <span id="ticket-title"></span></p>
-                            <p><strong>Estado:</strong> <span id="ticket-status"></span></p>
-                            <p><strong>Asignado a:</strong> <span id="ticket-assigned-to"></span></p>
-                            <p><strong>Descripción: </strong><span id="ticket-description"></span></p>
-                        </div>
-
-                        <div class="card shadow-sm rounded-4 p-4 h-auto">
-                            <h5>Resolución</h5>
-                            <div class="mb-3">
-                                <label for="solucion" class="form-label">Solución Aplicada</label>
-                                <textarea id="solucion" class="form-control" rows="3" maxlength="249"></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="estado" class="form-label">Cambiar Estado</label>
-                                <select id="estado" class="form-select">
-                                    <option value="Nuevo">Nuevo</option>
-                                    <option value="En Proceso">En Proceso</option>
-                                    <option value="Resuelto">Resuelto</option>
-                                    <option value="Cerrado">Cerrado</option>
-                                </select>
-                            </div>
-                            <button class="btn btn-secondary">Guardar Cambios</button>
-                        </div>
-                    </div>
+                        <i class="bi bi-person-circle me-2"></i>Re asignar agente
+                    </button>
+                    <a href="tickets.html" class="btn btn-secondary w-100 w-md-auto">
+                        <i class="bi bi-arrow-left-circle me-2"></i>Regresar a "Tickets"
+                    </a>
                 </div>
             </div>
-        </div>
 
-        <!-- MODAL ASIGNAR AGENTE -->
-        <div class="modal fade" id="modalAsignarAgente" tabindex="-1" aria-labelledby="asignarAgenteLabel"
-            aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content rounded-4 border-0 shadow-sm">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="asignarAgenteLabel">Asignar un agente manualmente</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-                    </div>
-                    <div class="modal-body">
+            <div class="row">
+                <!-- Sugerencia del Bot -->
+                <div class="col-sm-12 col-md-6 mb-3">
+                    <div class="bot-card h-auto">
+                        <h5 class="mb-4">Sugerencia del Bot</h5>
+                        <p><strong>Prioridad:</strong> <span id="ticket-priority" class="priority-tag"></span></p>
+                        <p><strong>Categoría:</strong> <span id="ticket-category"></span></p>
+                        <p><strong>Agente Sugerido:</strong> <span id="bot-agent"></span></p>
+                        <p><strong>Conclusión: </strong><span id="bot-reasoning"></span></p>
                         <div class="alert alert-secondary shadow-sm rounded-3" role="alert">
-                            <strong>Nota:</strong> Si la asignación manual del Bot IA falla, puedes reasignar el ticket
-                            a un
-                            agente de soporte humano según el nivel de seniority.
+                            <strong>Pasos para solución:</strong>
+                            <ul id="bot-solution" class="mb-0 mt-2 ps-3"></ul>
                         </div>
-                        <form id="formAsignarAgente">
-                            <div class="mb-3">
-                                <label for="nivelSoporte" class="form-label">Nivel de seniority</label>
-                                <select class="form-select rounded-3" id="nivelSoporte">
-                                    <option selected disabled>Seleccionar nivel...</option>
-                                    <option value="SOPORTE JUNIOR">SOPORTE JUNIOR</option>
-                                    <option value="SOPORTE MEDIO">SOPORTE MEDIO</option>
-                                    <option value="SOPORTE SENIOR">SOPORTE SENIOR</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="agenteSoporte" class="form-label">Agente por nivel</label>
-                                <select class="form-select rounded-3" id="agenteSoporte">
-                                    <option selected disabled>Seleccionar agente...</option>
-                                </select>
-                            </div>
-                        </form>
+                        <p><strong>Palabras Clave Detectadas: </strong><span id="bot-keywords"></span></p>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                        <button type="button" class="btn btn-secondary">Asignar</button>
+                </div>
+
+                <!-- Información general, descripción y resolución -->
+                <div class="col-sm-12 col-md-6 mb-4">
+                    <div class="card shadow-sm rounded-4 mb-2 p-4 h-auto">
+                        <h5 class="mb-4">Información General</h5>
+                        <p><strong>Fecha de creación:</strong> <span id="ticket-date"></span></p>
+                        <p><strong>Asunto:</strong> <span id="ticket-title"></span></p>
+                        <p><strong>Estado:</strong> <span id="ticket-status"></span></p>
+                        <p><strong>Asignado a:</strong> <span id="ticket-assigned-to"></span></p>
+                        <p><strong>Descripción: </strong><span id="ticket-description"></span></p>
+                    </div>
+
+                    <div class="card shadow-sm rounded-4 p-4 h-auto">
+                        <h5>Estado</h5>
+                        <div class="mb-3">
+                            <select id="estado" class="form-select">
+                                <option value="New">Nuevo</option>
+                                <option value="En Proceso">En Proceso</option>
+                                <option value="Resuelto">Resuelto</option>
+                                <option value="Cerrado">Cerrado</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('show');
-        }
-    </script>
+    <!-- MODAL ASIGNAR AGENTE -->
+    <div class="modal fade" id="modalAsignarAgente" tabindex="-1" aria-labelledby="asignarAgenteLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-4 border-0 shadow-sm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="asignarAgenteLabel">Asignar un agente manualmente</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-secondary shadow-sm rounded-3" role="alert">
+                        <strong>Nota:</strong> Si la asignación manual del Bot IA falla, puedes reasignar el ticket
+                        a un
+                        agente de soporte humano según el nivel de seniority.
+                    </div>
+                    <form id="formAsignarAgente">
+                        <div class="mb-3">
+                            <label for="nivelSoporte" class="form-label">Nivel de seniority</label>
+                            <select class="form-select rounded-3" id="nivelSoporte">
+                                <option value="" selected disabled>Seleccionar nivel...</option>
+                                <option value="SOPORTE JUNIOR">SOPORTE JUNIOR</option>
+                                <option value="SOPORTE MEDIO">SOPORTE MEDIO</option>
+                                <option value="SOPORTE SENIOR">SOPORTE SENIOR</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="agenteSoporte" class="form-label">Agente por nivel</label>
+                            <select class="form-select rounded-3" id="agenteSoporte">
+                                <option value="" selected disabled>Seleccionar agente...</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" id="btnAgentAssign">Asignar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+<script>
+    function toggleSidebar() {
+        document.getElementById('sidebar').classList.toggle('show');
+    }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js"
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js"
         integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+"
         crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
-    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../../utils/init.js" type="module"></script>
-    <script src="../../utils/tokenValidation.js" type="module"></script>
-    <script src="../../services/ticketDetails.js" type="module"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.68/vfs_fonts.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../../utils/init.js" type="module"></script>
+<script src="../../utils/tokenValidation.js" type="module"></script>
+<script src="../../services/ticketDetails.js" type="module"></script>
 </body>
 
 </html>
