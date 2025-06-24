@@ -1,10 +1,10 @@
 // Imports para reutilización
-import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
-import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
-import {verificarToken} from '../utils/tokenValidation.js';
-import {mostrarToast} from '../utils/toast.js';
-import {USERS_API, TICKETS_API, ROLES_API, ROLES_GET_BY_ID_API} from '../config/constants.js';
-import {MENU_LOOKUP} from '../utils/menuIcons.js';
+import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import { verificarToken } from '../utils/tokenValidation.js';
+import { mostrarToast } from '../utils/toast.js';
+import { USERS_API, TICKETS_API, ROLES_API, ROLES_GET_BY_ID_API } from '../config/constants.js';
+import { MENU_LOOKUP } from '../utils/menuIcons.js';
 
 const removeAllSessionStorage = async () => {
     sessionStorage.removeItem("token");
@@ -48,7 +48,7 @@ const obtainHeaders = () => {
         return null;
     }
     //retorna el token
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
 
 
@@ -117,8 +117,8 @@ const obtainTicketsStatistics = async () => {
 };
 
 
-document.addEventListener("DOMContentLoaded", async() => {
-    
+document.addEventListener("DOMContentLoaded", async () => {
+
     // Variables
     const btnCerrarSesion = document.getElementById("btnCloseSession");
 
@@ -133,21 +133,3 @@ document.addEventListener("DOMContentLoaded", async() => {
     await obtainUsersStatistics();
     await obtainTicketsStatistics();
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

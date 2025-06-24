@@ -1,7 +1,7 @@
-import {clasificarTicketIA} from './iaml.js';
-import {mostrarToast} from '../utils/toast.js';
-import {TICKETS_API, USERS_API} from '../config/constants.js';
-import {sendData, fetchData} from '../data/apiMethods.js';
+import { clasificarTicketIA } from './iaml.js';
+import { mostrarToast } from '../utils/toast.js';
+import { TICKETS_API, USERS_API } from '../config/constants.js';
+import { sendData, fetchData } from '../data/apiMethods.js';
 
 const obtenerAgentePorPrioridad = async (prioridad) => {
     try {
@@ -32,7 +32,7 @@ const obtenerAgentePorPrioridad = async (prioridad) => {
     }
 };
 
-export const crearNuevoTicket = async ({asunto, descripcion, fecha, categoriaId, formId, modalId}) => {
+export const crearNuevoTicket = async ({ asunto, descripcion, fecha, categoriaId, formId, modalId }) => {
     if (!fecha || !asunto || !descripcion || !categoriaId) {
         mostrarToast('Todos los campos son obligatorios.', 'danger');
         return;
@@ -105,7 +105,7 @@ const obtainHeaders = () => {
         return null;
     }
     //retorna el token
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
 
 
@@ -130,9 +130,9 @@ const obtainTickets = async () => {
                         title: "Fecha",
                         render: data => new Date(data).toLocaleString()
                     },
-                    {data: "createdByName", title: "Nombre"},
-                    {data: "title", title: "Asunto"},
-                    {data: "status", title: "Estado"},
+                    { data: "createdByName", title: "Nombre" },
+                    { data: "title", title: "Asunto" },
+                    { data: "status", title: "Estado" },
                     {
                         data: "changeDate",
                         title: "Última respuesta",

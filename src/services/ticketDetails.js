@@ -1,10 +1,10 @@
 // Importar rutas de APIs para hacer uso de ellas
-import {ROLES_API, ROLES_GET_BY_ID_API, USERS_API, TICKETS_GET_BY_ID_API, CATEGORY_API, TICKETS_API} from '../config/constants.js';
-import {MENU_LOOKUP} from '../utils/menuIcons.js';
-import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
-import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
-import {verificarToken} from "../utils/tokenValidation.js";
-import {mostrarToast} from "../utils/toast.js";
+import { ROLES_API, ROLES_GET_BY_ID_API, USERS_API, TICKETS_GET_BY_ID_API, CATEGORY_API, TICKETS_API } from '../config/constants.js';
+import { MENU_LOOKUP } from '../utils/menuIcons.js';
+import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import { verificarToken } from "../utils/tokenValidation.js";
+import { mostrarToast } from "../utils/toast.js";
 
 // Función para cerrar sesión
 const removeAllSessionStorage = () => {
@@ -44,7 +44,7 @@ const obtainHeaders = () => {
         closeSession();
         return null;
     }
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
 
 

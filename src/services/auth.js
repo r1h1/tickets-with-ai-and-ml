@@ -2,7 +2,7 @@
 import { AUTH_API, AUTH_LOGIN_API, AUTH_CAMBIAR_CLAVE_API, AUTH_REGISTRAR_API, AUTH_VALIDAR_TOKEN_API } from '../config/constants.js';
 import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
-import {mostrarToast} from "../utils/toast.js";
+import { mostrarToast } from "../utils/toast.js";
 
 // Función mejorada para sanitizar entradas
 const sanitizeInput = (input) => {

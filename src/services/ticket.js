@@ -1,6 +1,6 @@
 // ===================== IMPORTACIONES =====================
-import { ROLES_API, TICKETS_API, CATEGORY_API, ROLES_GET_BY_ID_API} from '../config/constants.js';
-import {MENU_LOOKUP} from '../utils/menuIcons.js';
+import { ROLES_API, TICKETS_API, CATEGORY_API, ROLES_GET_BY_ID_API } from '../config/constants.js';
+import { MENU_LOOKUP } from '../utils/menuIcons.js';
 import { crearNuevoTicket } from './ticketCreator.js';
 import { showError } from '../utils/sweetAlert.js';
 import { fetchData, fetchDataToken } from '../data/apiMethods.js';

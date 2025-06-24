@@ -1,8 +1,8 @@
 // Se importan palabras y consultas para que el bot pueda resolver
 // MISMO DIRECTORIO
 import { contienePalabraTecnica, consultarBotIA, clasificarTicketIA } from './iaml.js';
-import {CATEGORY_API, CHATLOG_API, ROLES_GET_BY_ID_API} from '../config/constants.js';
-import {MENU_LOOKUP} from '../utils/menuIcons.js';
+import { CATEGORY_API, CHATLOG_API, ROLES_GET_BY_ID_API } from '../config/constants.js';
+import { MENU_LOOKUP } from '../utils/menuIcons.js';
 import { crearNuevoTicket } from './ticketCreator.js';
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 import { mostrarToast } from '../utils/toast.js';
@@ -35,7 +35,7 @@ const obtainHeaders = () => {
         return null;
     }
     //retorna el token
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
 
 const checkTokenAndLoginInfo = async () => {

@@ -3,7 +3,7 @@ import {
     API_IA_KEYS,
     IA_MODELS
 } from "../config/constants.js";
-import {IA_PROMPT_BASE} from "../config/prompts.js";
+import { IA_PROMPT_BASE } from "../config/prompts.js";
 import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 
 // Round robin para keys
@@ -47,8 +47,8 @@ export async function consultarBotIA(mensaje) {
     const body = {
         model: getNextModel(),
         messages: [
-            {role: 'system', content: IA_PROMPT_BASE.supportBot},
-            {role: 'user', content: mensaje}
+            { role: 'system', content: IA_PROMPT_BASE.supportBot },
+            { role: 'user', content: mensaje }
         ]
     };
 
@@ -86,7 +86,7 @@ export async function clasificarTicketIA(asunto, descripcion) {
     const body = {
         model: getNextModel(),
         messages: [
-            {role: 'user', content: JSON.stringify(promptData)}
+            { role: 'user', content: JSON.stringify(promptData) }
         ]
     };
 

@@ -1,10 +1,10 @@
 // Importar rutas de APIs para hacer uso de ellas
-import {CATEGORY_API, ROLES_API, ROLES_GET_BY_ID_API, USERS_API, USERS_GET_BY_ID_API, AUTH_API, AUTH_REGISTRAR_API, AUTH_LOGIC_DELETE} from '../config/constants.js';
-import {MENU_LOOKUP} from '../utils/menuIcons.js';
-import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
-import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
-import {verificarToken} from "../utils/tokenValidation.js";
-import {mostrarToast} from "../utils/toast.js";
+import { CATEGORY_API, ROLES_API, ROLES_GET_BY_ID_API, USERS_API, USERS_GET_BY_ID_API, AUTH_API, AUTH_REGISTRAR_API, AUTH_LOGIC_DELETE } from '../config/constants.js';
+import { MENU_LOOKUP } from '../utils/menuIcons.js';
+import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import { verificarToken } from "../utils/tokenValidation.js";
+import { mostrarToast } from "../utils/toast.js";
 
 const removeAllSessionStorage = () => {
     sessionStorage.removeItem("token");
@@ -48,7 +48,7 @@ const obtainHeaders = () => {
         return null;
     }
     //retorna el token
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
 
 
@@ -117,12 +117,12 @@ const obtainsUsers = async () => {
                 destroy: true,
                 data: response.data,
                 columns: [
-                    {data: "userId"},
-                    {data: "name"},
-                    {data: "email"},
-                    {data: "roleId"},
-                    {data: "roleName"},
-                    {data: "seniorityLevel"},
+                    { data: "userId" },
+                    { data: "name" },
+                    { data: "email" },
+                    { data: "roleId" },
+                    { data: "roleName" },
+                    { data: "seniorityLevel" },
                     {
                         data: null,
                         render: function (data, type, row) {

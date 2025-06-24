@@ -1,10 +1,10 @@
 // Importar rutas de APIs para hacer uso de ellas
-import {CATEGORY_API, CATEGORY_GET_BY_ID_API, ROLES_GET_BY_ID_API} from '../config/constants.js';
-import {MENU_LOOKUP} from '../utils/menuIcons.js';
-import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
-import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
-import {verificarToken} from "../utils/tokenValidation.js";
-import {mostrarToast} from "../utils/toast.js";
+import { CATEGORY_API, CATEGORY_GET_BY_ID_API, ROLES_GET_BY_ID_API } from '../config/constants.js';
+import { MENU_LOOKUP } from '../utils/menuIcons.js';
+import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import { verificarToken } from "../utils/tokenValidation.js";
+import { mostrarToast } from "../utils/toast.js";
 
 
 const removeAllSessionStorage = () => {
@@ -51,7 +51,7 @@ const obtainHeaders = () => {
         return null;
     }
     //retorna el token
-    return {"Authorization": `Bearer ${token}`};
+    return { "Authorization": `Bearer ${token}` };
 };
 
 
@@ -96,17 +96,17 @@ const obtainCategories = async () => {
                 destroy: true,
                 data: response.data,
                 columns: [
-                    {data: "categoryId"},
-                    {data: "name"},
-                    {data: "description"},
+                    { data: "categoryId" },
+                    { data: "name" },
+                    { data: "description" },
                     {
                         data: null,
                         render: function (data, type, row) {
                             return `
                                 <button onclick='editCategories(${JSON.stringify(row).replace(/'/g, "&#39;").
-                                        replace(/"/g, "&quot;")})' class="btn btn-warning">Editar</button>
+                                    replace(/"/g, "&quot;")})' class="btn btn-warning">Editar</button>
                                 <button onclick='deleteCategories(${JSON.stringify(row).replace(/'/g, "&#39;").
-                                        replace(/"/g, "&quot;")})' class="btn btn-danger">Eliminar</button>
+                                    replace(/"/g, "&quot;")})' class="btn btn-danger">Eliminar</button>
                             `;
                         }
                     }
@@ -196,7 +196,7 @@ const editCategories = async (row) => {
         document.getElementById("nombreCategoria").value = name;
         document.getElementById("descripcionCategoria").value = description;
 
-        if(categoryId){
+        if (categoryId) {
             const modal = new bootstrap.Modal(document.getElementById('modalAgregarCategoria'));
             modal.show();
         }
