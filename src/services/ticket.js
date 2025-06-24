@@ -1,8 +1,9 @@
 // ===================== IMPORTACIONES =====================
-import { ROLES_API, TICKETS_API, CATEGORY_API } from '../config/constants.js';
+import { ROLES_API, TICKETS_API, CATEGORY_API, ROLES_GET_BY_ID_API} from '../config/constants.js';
+import {MENU_LOOKUP} from '../utils/menuIcons.js';
 import { crearNuevoTicket } from './ticketCreator.js';
 import { showError } from '../utils/sweetAlert.js';
-import { fetchData } from '../data/apiMethods.js';
+import { fetchData, fetchDataToken } from '../data/apiMethods.js';
 import { verificarToken } from '../utils/tokenValidation.js';
 import { mostrarToast } from '../utils/toast.js';
 
@@ -50,6 +51,37 @@ const obtainHeaders = () => {
     }
     //retorna el token
     return { "Authorization": `Bearer ${token}` };
+};
+
+
+const obtainMenu = async () => {
+    try {
+        const tokenPayload = JSON.parse(atob(sessionStorage.getItem("token").split('.')[1]));
+        const response = await fetchDataToken(ROLES_GET_BY_ID_API(tokenPayload.role), "GET", obtainHeaders());
+
+        if (response && response.data?.assignedMenus) {
+            const allowedMenus = response.data.assignedMenus.split(",");
+            const container = document.getElementById("menuContainer");
+            const currentPage = location.pathname.split("/").pop();
+
+            container.innerHTML = "";
+
+            allowedMenus.forEach(menu => {
+                const menuData = MENU_LOOKUP[menu];
+                if (menuData) {
+                    const isActive = currentPage === menu ? "active" : "";
+                    container.innerHTML += `
+                        <a href="${menu}" class="${isActive}">
+                            <i class="bi ${menuData.icon} me-2"></i>${menuData.label}
+                        </a>`;
+                }
+            });
+        } else {
+            mostrarToast("No se trajeron datos del menú.", "warning");
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
 };
 
 
@@ -227,6 +259,7 @@ const initGuardarTicket = () => {
 document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById("btnCloseSession")?.addEventListener("click", closeSession);
     await checkTokenAndLoginInfo();
+    await obtainMenu();
     await obtainTickets();
     await obtainCategories();
     initUI();

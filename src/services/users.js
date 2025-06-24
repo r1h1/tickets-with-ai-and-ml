@@ -1,7 +1,8 @@
 // Importar rutas de APIs para hacer uso de ellas
-import {CATEGORY_API, ROLES_API, USERS_API, USERS_GET_BY_ID_API, AUTH_API, AUTH_REGISTRAR_API, AUTH_LOGIC_DELETE} from '../config/constants.js';
-import { showSuccess, showError, showAlert, showConfirmation } from '../utils/sweetAlert.js';
-import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
+import {CATEGORY_API, ROLES_API, ROLES_GET_BY_ID_API, USERS_API, USERS_GET_BY_ID_API, AUTH_API, AUTH_REGISTRAR_API, AUTH_LOGIC_DELETE} from '../config/constants.js';
+import {MENU_LOOKUP} from '../utils/menuIcons.js';
+import {showSuccess, showError, showAlert, showConfirmation} from '../utils/sweetAlert.js';
+import {fetchData, fetchDataToken, sendData} from '../data/apiMethods.js';
 import {verificarToken} from "../utils/tokenValidation.js";
 import {mostrarToast} from "../utils/toast.js";
 
@@ -48,6 +49,37 @@ const obtainHeaders = () => {
     }
     //retorna el token
     return {"Authorization": `Bearer ${token}`};
+};
+
+
+const obtainMenu = async () => {
+    try {
+        const tokenPayload = JSON.parse(atob(sessionStorage.getItem("token").split('.')[1]));
+        const response = await fetchDataToken(ROLES_GET_BY_ID_API(tokenPayload.role), "GET", obtainHeaders());
+
+        if (response && response.data?.assignedMenus) {
+            const allowedMenus = response.data.assignedMenus.split(",");
+            const container = document.getElementById("menuContainer");
+            const currentPage = location.pathname.split("/").pop();
+
+            container.innerHTML = "";
+
+            allowedMenus.forEach(menu => {
+                const menuData = MENU_LOOKUP[menu];
+                if (menuData) {
+                    const isActive = currentPage === menu ? "active" : "";
+                    container.innerHTML += `
+                        <a href="${menu}" class="${isActive}">
+                            <i class="bi ${menuData.icon} me-2"></i>${menuData.label}
+                        </a>`;
+                }
+            });
+        } else {
+            mostrarToast("No se trajeron datos del menú.", "warning");
+        }
+    } catch (error) {
+        mostrarToast(error, "danger");
+    }
 };
 
 
@@ -422,6 +454,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Funciones a ejecutarse
     await checkTokenAndLoginInfo();
+    await obtainMenu();
     await obtainRols();
     await obtainsUsers();
 });
