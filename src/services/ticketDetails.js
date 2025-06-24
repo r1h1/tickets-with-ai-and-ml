@@ -79,98 +79,116 @@ const obtainMenu = async () => {
 };
 
 
-// Obtener detalle del ticket
 const obtainTicketDetail = async () => {
     try {
+        // Obtener ID del ticket desde la URL
         const urlParams = new URLSearchParams(window.location.search);
-        const idTicket = urlParams.get("q").toString();
-        document.getElementById("ticketNumber").textContent = idTicket || "Sin número de ticket";
+        const ticketId = urlParams.get("q");
+        document.getElementById("ticketNumber").textContent = ticketId || "Sin número de ticket";
 
-        const response = await fetchData(TICKETS_GET_BY_ID_API(idTicket), "GET", obtainHeaders());
+        // Extraer datos del usuario desde el token
+        const tokenPayload = JSON.parse(atob(sessionStorage.getItem("token").split('.')[1]));
+        const userRole = parseInt(tokenPayload.role);
 
-        if (response && response.data) {
-            const ticket = response.data;
+        // Bloquear controles si no es admin ni superadmin
+        if (![1, 2].includes(userRole)) {
+            disableRestrictedControls();
+        }
 
-            // Datos generales del ticket
-            document.getElementById("ticket-title").textContent = ticket.title || "Sin asunto";
-            document.getElementById("ticket-description").textContent = ticket.description || "Sin descripción";
-            document.getElementById("ticket-status").textContent = ticket.status || "Sin estado";
-            document.getElementById("ticket-created-by").textContent = ticket.createdByName || "Desconocido";
-            document.getElementById("ticket-date").textContent = new Date(ticket.createdAt).toLocaleString("es-GT");
-            document.getElementById("ticket-assigned-to").textContent = ticket.assignedToName || "Sin asignar";
-            document.getElementById("ticket-category").textContent = ticket.categoryName || "Sin categoría";
-            document.getElementById("estado").value = ticket.status || "New";
-
-            // Prioridad visual
-            const prioridadTag = document.getElementById("ticket-priority");
-            const prioridad = ticket.priority ? ticket.priority.toLowerCase() : "";
-            prioridadTag.textContent = ticket.priority?.toUpperCase() || "SIN DEFINIR";
-
-            prioridadTag.classList.remove("priority-low", "priority-medium", "priority-high", "priority-critical");
-
-            if (prioridad === "baja") {
-                prioridadTag.classList.add("priority-low");
-            } else if (prioridad === "media") {
-                prioridadTag.classList.add("priority-medium");
-            } else if (prioridad === "alta") {
-                prioridadTag.classList.add("priority-high");
-            } else if (prioridad === "critica") {
-                prioridadTag.classList.add("priority-critical");
-            } else {
-                prioridadTag.classList.add("bg-secondary", "text-white");
-            }
-
-            // Datos del bot (IA)
-            if (ticket.classifiedByML) {
-                document.getElementById("bot-agent").textContent = ticket.suggestedAgent?.toUpperCase() || "NO DETECTADO";
-                document.getElementById("bot-reasoning").textContent = ticket.reasoning || "Sin razonamiento";
-
-                const solucionList = document.getElementById("bot-solution");
-                solucionList.innerHTML = "";
-
-                if (ticket.solution && ticket.solution.trim() !== "") {
-                    const pasos = ticket.solution.split(". ");
-                    for (let i = 0; i < pasos.length; i++) {
-                        if (pasos[i].trim() !== "") {
-                            const li = document.createElement("li");
-                            li.textContent = pasos[i].trim();
-                            solucionList.appendChild(li);
-                        }
-                    }
-                } else {
-                    const li = document.createElement("li");
-                    li.textContent = "Sin pasos sugeridos";
-                    solucionList.appendChild(li);
-                }
-
-                // Mostrar keywords como lista
-                const keywordsList = document.getElementById("bot-keywords");
-                keywordsList.innerHTML = "";
-                if (ticket.keywords && ticket.keywords.trim() !== "") {
-                    const palabras = ticket.keywords.split(",");
-                    for (let i = 0; i < palabras.length; i++) {
-                        const palabra = palabras[i].trim();
-                        if (palabra !== "") {
-                            const li = document.createElement("li");
-                            li.textContent = palabra;
-                            keywordsList.appendChild(li);
-                        }
-                    }
-                } else {
-                    const li = document.createElement("li");
-                    li.textContent = "No se detectaron palabras clave";
-                    keywordsList.appendChild(li);
-                }
-            }
-
-        } else {
+        // Obtener detalle del ticket desde la API
+        const response = await fetchData(TICKETS_GET_BY_ID_API(ticketId), "GET", obtainHeaders());
+        if (!response?.data) {
             mostrarToast("No se trajeron datos del ticket.", "warning");
+            return;
+        }
+
+        const ticket = response.data;
+        renderTicketGeneralInfo(ticket);
+        renderTicketPriority(ticket.priority);
+        if (ticket.classifiedByML) {
+            renderMLDetails(ticket);
         }
 
     } catch (error) {
-        mostrarToast(error, "danger");
+        mostrarToast(error.message || error, "danger");
     }
 };
+
+
+function disableRestrictedControls() {
+    const estadoSelect = document.getElementById("estado");
+    const btnReasignar = document.getElementById("btnReasignar");
+    const selectNivel = document.getElementById("nivelSoporte");
+    const selectAgente = document.getElementById("agenteSoporte");
+
+    if (estadoSelect) estadoSelect.disabled = true;
+    if (btnReasignar) {
+        btnReasignar.disabled = true;
+        btnReasignar.classList.add("disabled");
+    }
+    if (selectNivel) selectNivel.disabled = true;
+    if (selectAgente) selectAgente.disabled = true;
+}
+
+
+function renderTicketGeneralInfo(ticket) {
+    document.getElementById("ticket-title").textContent = ticket.title || "Sin asunto";
+    document.getElementById("ticket-description").textContent = ticket.description || "Sin descripción";
+    document.getElementById("ticket-status").textContent = ticket.status || "Sin estado";
+    document.getElementById("ticket-created-by").textContent = ticket.createdByName || "Desconocido";
+    document.getElementById("ticket-date").textContent = new Date(ticket.createdAt).toLocaleString("es-GT");
+    document.getElementById("ticket-assigned-to").textContent = ticket.assignedToName || "Sin asignar";
+    document.getElementById("ticket-category").textContent = ticket.categoryName || "Sin categoría";
+    document.getElementById("estado").value = ticket.status || "New";
+}
+
+
+function renderTicketPriority(prioridad) {
+    const prioridadTag = document.getElementById("ticket-priority");
+    const prioridadLower = prioridad?.toLowerCase() || "";
+
+    const prioridadMap = {
+        baja: "priority-low",
+        media: "priority-medium",
+        alta: "priority-high",
+        critica: "priority-critical"
+    };
+
+    prioridadTag.textContent = prioridad?.toUpperCase() || "SIN DEFINIR";
+    prioridadTag.className = "priority-tag"; // Reset base
+
+    if (prioridadMap[prioridadLower]) {
+        prioridadTag.classList.add(prioridadMap[prioridadLower]);
+    } else {
+        prioridadTag.classList.add("bg-secondary", "text-white");
+    }
+}
+
+
+
+function renderMLDetails(ticket) {
+    document.getElementById("bot-agent").textContent = ticket.suggestedAgent?.toUpperCase() || "NO DETECTADO";
+    document.getElementById("bot-reasoning").textContent = ticket.reasoning || "Sin razonamiento";
+
+    renderListItems("bot-solution", ticket.solution?.split(". ") || ["Sin pasos sugeridos"]);
+    renderListItems("bot-keywords", ticket.keywords?.split(",") || ["No se detectaron palabras clave"]);
+}
+
+
+
+function renderListItems(elementId, items) {
+    const list = document.getElementById(elementId);
+    list.innerHTML = "";
+
+    items.forEach(item => {
+        const trimmed = item.trim();
+        if (trimmed) {
+            const li = document.createElement("li");
+            li.textContent = trimmed;
+            list.appendChild(li);
+        }
+    });
+}
 
 
 const inicializarSelectorAgente = async () => {

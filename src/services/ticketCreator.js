@@ -114,67 +114,72 @@ const obtainTickets = async () => {
         const response = await fetchData(TICKETS_API, "GET", obtainHeaders());
 
         if (response && response.data) {
+            // Extraer datos del token
+            const tokenPayload = JSON.parse(atob(sessionStorage.getItem("token").split('.')[1]));
+            const userRole = parseInt(tokenPayload.role); // 1 = superadmin, 2 = admin
+            const userId = parseInt(tokenPayload.nameid);
+            const isPrivileged = userRole === 1 || userRole === 2;
+
+            // Filtrado de tickets si no tiene privilegios
+            let filteredTickets = response.data;
+            if (!isPrivileged) {
+                filteredTickets = filteredTickets.filter(ticket => ticket.createdBy === userId);
+            }
+
             $('#ticketsTable').DataTable({
                 destroy: true,
-                data: response.data,
+                data: filteredTickets,
                 columns: [
                     {
                         data: "ticketId",
-                        title: "No. de Ticket",
-                        render: function (data, type, row) {
+                        render: function (data) {
                             return `<a href="detalle_ticket.html?q=${data}" class="fw-bold text-primary">${data}</a>`;
                         }
                     },
                     {
                         data: "createdAt",
-                        title: "Fecha",
                         render: data => new Date(data).toLocaleString()
                     },
-                    { data: "createdByName", title: "Nombre" },
-                    { data: "title", title: "Asunto" },
-                    { data: "status", title: "Estado" },
+                    { data: "createdByName" },
                     {
-                        data: "changeDate",
-                        title: "Última respuesta",
-                        render: data => new Date(data).toLocaleString()
+                        data: "assignedToName",
+                        render: function (data) {
+                            return data && data.trim() !== "" ? data : "Sin asignar";
+                        }
                     },
+                    { data: "title" },
+                    { data: "status" },
                     {
                         data: "priority",
-                        title: "Prioridad",
                         render: function (data) {
                             let className = "";
-
                             switch (data.toLowerCase()) {
                                 case "crítica":
                                 case "critica":
                                 case "critical":
-                                    className = "priority-critical";
-                                    break;
+                                    className = "priority-critical"; break;
                                 case "alta":
                                 case "high":
-                                    className = "priority-high";
-                                    break;
+                                    className = "priority-high"; break;
                                 case "media":
                                 case "medium":
-                                    className = "priority-medium";
-                                    break;
+                                    className = "priority-medium"; break;
                                 case "baja":
                                 case "low":
-                                    className = "priority-low";
-                                    break;
+                                    className = "priority-low"; break;
                                 default:
                                     className = "priority-low";
                             }
-
                             return `<span class="priority-tag ${className}">${data}</span>`;
                         }
                     },
                     {
                         data: null,
                         render: function (data, type, row) {
-                            return `
-                                    <button onclick="deleteTicket(${row.ticketId})" class="btn btn-danger">Eliminar</button>
-                                    `;
+                            // Mostrar solo si es admin o superadmin
+                            return isPrivileged
+                                ? `<button onclick="deleteTicket(${row.ticketId})" class="btn btn-danger">Eliminar</button>`
+                                : '';
                         }
                     }
                 ],
@@ -207,4 +212,4 @@ const obtainTickets = async () => {
     } catch (error) {
         mostrarToast(error.message || error, "danger");
     }
-}
+};
