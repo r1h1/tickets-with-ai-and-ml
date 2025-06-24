@@ -3,7 +3,7 @@ import { ROLES_API, TICKETS_API, CATEGORY_API, ROLES_GET_BY_ID_API } from '../co
 import { MENU_LOOKUP } from '../utils/menuIcons.js';
 import { crearNuevoTicket } from './ticketCreator.js';
 import { showError } from '../utils/sweetAlert.js';
-import { fetchData, fetchDataToken } from '../data/apiMethods.js';
+import { fetchData, fetchDataToken, sendData } from '../data/apiMethods.js';
 import { verificarToken } from '../utils/tokenValidation.js';
 import { mostrarToast } from '../utils/toast.js';
 
@@ -178,7 +178,8 @@ const obtainTickets = async () => {
                         render: function (data, type, row) {
                             // Mostrar solo si es admin o superadmin
                             return isPrivileged
-                                ? `<button onclick="deleteTicket(${row.ticketId})" class="btn btn-danger">Eliminar</button>`
+                                ? `<button onclick="deleteTicket(${JSON.stringify(row).replace(/'/g, "&#39;").
+                                    replace(/"/g, "&quot;")})" class="btn btn-danger">Eliminar</button>`
                                 : '';
                         }
                     }
@@ -264,6 +265,75 @@ const initGuardarTicket = () => {
         btnGuardar.disabled = false;
     });
 };
+
+
+const deleteTicket = async (row) => {
+    try {
+        if (!row || !row.ticketId) {
+            mostrarToast("No se encontró el ticket para eliminar.", "danger");
+            return;
+        }
+
+        const confirmacion = await Swal.fire({
+            title: `¿Estás seguro?`,
+            text: `El ticket #${row.ticketId} será eliminado.`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        });
+
+        if (!confirmacion.isConfirmed) {
+            mostrarToast("Cancelaste la eliminación del ticket.", "secondary");
+            return;
+        }
+
+        const tokenPayload = JSON.parse(atob(sessionStorage.getItem("token").split('.')[1]));
+
+        const payload = {
+            ticketId: row.ticketId,
+            title: row.title,
+            description: row.description,
+            problem: row.problem,
+            priority: row.priority,
+            status: row.status,
+            createdBy: row.createdBy,
+            createdByName: row.createdByName || "",
+            assignedTo: row.assignedTo,
+            assignedToName: row.assignedToName || "",
+            categoryId: row.categoryId,
+            categoryName: row.categoryName || "",
+            suggestedAgent: row.suggestedAgent || "",
+            reasoning: row.reasoning || "",
+            solution: row.solution || "",
+            keywords: row.keywords || "",
+            classifiedByML: row.classifiedByML,
+            changedBy: tokenPayload.nameid,
+            changedByName: tokenPayload.unique_name || "",
+            createdAt: row.createdAt,
+            changeDate: new Date().toISOString(),
+            state: 0,
+            newTicketId: 0,
+            success: 0
+        };
+
+        const response = await sendData(TICKETS_API, "DELETE", payload, obtainHeaders());
+
+        if (response?.data?.success === 1) {
+            mostrarToast(response?.message || "Ticket eliminado correctamente.", "success");
+            await obtainTickets();
+        } else {
+            mostrarToast(response?.message || "No se pudo eliminar el ticket.", "danger");
+        }
+    } catch (error) {
+        mostrarToast(error.message || "Ocurrió un error al eliminar el ticket.", "danger");
+    }
+};
+
+
+window.deleteTicket = deleteTicket;
 
 
 // ===================== INICIALIZACIÓN =====================
